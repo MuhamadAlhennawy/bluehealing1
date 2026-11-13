@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Blue Healing Restaurant & Lounge • قائمة الطعام الرسمية</title>
+    <title>Blue Healing Restaurant & Lounge • المنيو التفاعلي الفاخر</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +18,8 @@
             --brand-cyan: #06B6D4;
             --brand-gold: #D97706;
             --brand-gold-light: #FEF3C7;
+            --kids-pink: #EC4899;
+            --kids-pink-bg: #FDF2F8;
             --success: #059669;
             --success-light: #ECFDF5;
             --danger: #EF4444;
@@ -28,12 +30,13 @@
             --border: #E2E8F0;
             --text-main: #0F172A;
             --text-muted: #64748B;
-            --radius-lg: 16px;
-            --radius-md: 10px;
-            --radius-sm: 6px;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
-            --shadow-lg: 0 10px 20px -3px rgba(0,0,0,0.09), 0 4px 6px -2px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.12), 0 6px 12px -2px rgba(15, 23, 42, 0.06);
+            --shadow-hover: 0 20px 30px -8px rgba(15, 23, 42, 0.18);
         }
 
         * {
@@ -51,11 +54,31 @@
             padding: 12px;
             font-size: 14px;
             line-height: 1.5;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(236, 72, 153, 0.03) 0%, transparent 40%);
         }
 
         .container {
             max-width: 1280px;
             margin: 0 auto;
+        }
+
+        /* Animations */
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.96) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(6, 182, 212, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+        }
+
+        @keyframes floatAnim {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
         }
 
         /* Top Header Navbar */
@@ -91,6 +114,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 3px 10px rgba(6, 182, 212, 0.4);
+            animation: pulseGlow 2.5s infinite;
             flex-shrink: 0;
         }
 
@@ -139,16 +163,16 @@
             border-radius: var(--radius-sm);
             border: none;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
             white-space: nowrap;
         }
-        .btn:active { transform: scale(0.97); }
+        .btn:active { transform: scale(0.96); }
 
         .btn-primary { background: var(--brand-blue); color: white; }
-        .btn-primary:hover { background: #1D4ED8; }
+        .btn-primary:hover { background: #1D4ED8; box-shadow: 0 4px 10px rgba(37,99,235,0.25); }
 
         .btn-gold { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; }
-        .btn-gold:hover { background: #B45309; }
+        .btn-gold:hover { background: #B45309; box-shadow: 0 4px 10px rgba(217,119,6,0.25); }
 
         .btn-success { background: var(--success); color: white; }
         .btn-success:hover { background: #047857; }
@@ -166,24 +190,25 @@
         .btn-purple:hover { background: #6D28D9; }
 
         .btn-whatsapp { background: #25D366; color: white; }
-        .btn-whatsapp:hover { background: #1EBE5D; }
+        .btn-whatsapp:hover { background: #1EBE5D; box-shadow: 0 4px 10px rgba(37,211,102,0.3); }
 
         .btn-sm { padding: 5px 10px; font-size: 12px; }
 
         /* ======================================================== */
-        /* VIEW 1: REAL RESTAURANT DIGITAL MENU (CUSTOMER VIEW)     */
+        /* VIEW 1: CUSTOMER VIEW & LUXURY DIGITAL MENU              */
         /* ======================================================== */
         #customerSection {
             display: block;
+            animation: fadeInScale 0.3s ease-out;
         }
 
         /* Restaurant Atmosphere Banner */
         .restaurant-cover-banner {
-            background: linear-gradient(rgba(11, 19, 43, 0.82), rgba(11, 19, 43, 0.88)), 
+            background: linear-gradient(rgba(11, 19, 43, 0.82), rgba(11, 19, 43, 0.90)), 
                         url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80') center/cover;
             color: white;
             border-radius: var(--radius-lg);
-            padding: 36px 24px;
+            padding: 38px 24px;
             margin-bottom: 20px;
             text-align: center;
             box-shadow: var(--shadow-md);
@@ -191,7 +216,7 @@
         }
 
         .restaurant-cover-banner h2 {
-            font-size: 30px;
+            font-size: 32px;
             font-weight: 900;
             color: #FFFFFF;
             margin-bottom: 8px;
@@ -209,10 +234,10 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 12px;
             font-size: 12px;
             color: #E2E8F0;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .feature-item {
@@ -220,37 +245,39 @@
             align-items: center;
             gap: 6px;
             background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(4px);
-            padding: 5px 12px;
+            backdrop-filter: blur(6px);
+            padding: 6px 14px;
             border-radius: 9999px;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s;
         }
+        .feature-item:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-1px); }
 
         .search-and-filter-box {
             display: flex;
             justify-content: center;
             gap: 10px;
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
         }
 
         .search-and-filter-box input {
             width: 100%;
-            padding: 12px 18px;
+            padding: 12px 20px;
             border-radius: 9999px;
-            border: 1.5px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.18);
             color: white;
             font-size: 14px;
             outline: none;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
             transition: all 0.2s;
         }
         .search-and-filter-box input::placeholder { color: #94A3B8; }
         .search-and-filter-box input:focus {
             border-color: #38BDF8;
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+            background: rgba(255, 255, 255, 0.28);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.3);
         }
 
         /* Sticky Categories Bar */
@@ -278,23 +305,30 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.15s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
             box-shadow: var(--shadow-sm);
         }
-        .category-pill:hover { border-color: #94A3B8; }
+        .category-pill:hover { border-color: var(--brand-blue); color: var(--brand-blue); transform: translateY(-2px); }
         .category-pill.active {
-            background: var(--brand-primary);
+            background: linear-gradient(135deg, #1E293B, #0F172A);
             color: white;
-            border-color: var(--brand-primary);
-            box-shadow: var(--shadow-md);
+            border-color: #0F172A;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+            transform: translateY(-2px);
+        }
+        .category-pill.kids-active {
+            background: linear-gradient(135deg, #EC4899, #DB2777);
+            color: white;
+            border-color: #DB2777;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
         }
 
         /* Real Menu Dish Cards Grid */
         .customer-menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 20px;
+            gap: 22px;
             margin-bottom: 30px;
         }
 
@@ -304,15 +338,21 @@
             border: 1px solid var(--border);
             overflow: hidden;
             box-shadow: var(--shadow-sm);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.2s;
             display: flex;
             flex-direction: column;
             position: relative;
+            cursor: pointer;
         }
         .real-dish-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: #CBD5E1;
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: #94A3B8;
+        }
+
+        .real-dish-card.is-kids-meal {
+            border: 1.5px solid #FBCFE8;
+            background: linear-gradient(180deg, #FFFFFF 85%, #FDF2F8 100%);
         }
 
         /* Dish Card Image Container */
@@ -328,36 +368,51 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.4s ease;
+            transition: transform 0.5s ease;
         }
         .real-dish-card:hover .dish-img {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
 
         .dish-floating-badge {
             position: absolute;
             top: 12px;
             right: 12px;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(6px);
             color: #FCD34D;
             font-size: 11px;
             font-weight: 800;
             padding: 4px 10px;
             border-radius: 9999px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            animation: floatAnim 3s ease-in-out infinite;
         }
 
         .dish-portion-badge {
             position: absolute;
             bottom: 10px;
             left: 12px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(4px);
             color: #1E293B;
             font-size: 11px;
             font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .dish-rating-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            color: #FBBF24;
+            font-size: 11px;
+            font-weight: 800;
             padding: 3px 8px;
             border-radius: 6px;
         }
@@ -399,7 +454,7 @@
             font-size: 13px;
             color: #64748B;
             line-height: 1.6;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -445,6 +500,7 @@
         /* ======================================================== */
         #managerSection {
             display: none;
+            animation: fadeInScale 0.3s ease-out;
         }
 
         .manager-control-bar {
@@ -810,14 +866,14 @@
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(3px);
+            backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             padding: 14px;
         }
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active { display: flex; animation: fadeInScale 0.2s ease-out; }
 
         .modal-content {
             background: white;
@@ -825,7 +881,7 @@
             max-width: 620px;
             max-height: 90vh;
             border-radius: var(--radius-lg);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+            box-shadow: 0 25px 30px -5px rgba(0,0,0,0.25);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -875,33 +931,42 @@
             line-height: 1.5;
         }
 
-        /* Admin Management Table */
-        .admin-table {
+        /* Generic Admin & Category Tables */
+        .manager-data-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
             margin-bottom: 16px;
         }
-        .admin-table th {
+        .manager-data-table th {
             background: #F1F5F9;
             padding: 8px 10px;
             text-align: right;
             border-bottom: 2px solid var(--border);
             font-size: 12px;
         }
-        .admin-table td {
+        .manager-data-table td {
             padding: 8px 10px;
             border-bottom: 1px solid #F1F5F9;
             vertical-align: middle;
         }
-        .admin-table tr:hover { background: #F8FAFC; }
+        .manager-data-table tr:hover { background: #F8FAFC; }
 
-        .add-admin-form-box {
+        .manager-sub-box {
             background: #F8FAFC;
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             padding: 14px;
             margin-top: 10px;
+        }
+
+        /* Dish Detail Modal (For Customer) */
+        .detail-dish-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
         }
 
         /* Mobile specific adjustments */
@@ -911,7 +976,7 @@
             .top-navbar { padding: 10px 14px; }
             .brand-text h1 { font-size: 16px; }
             .restaurant-cover-banner { padding: 24px 14px; }
-            .restaurant-cover-banner h2 { font-size: 22px; }
+            .restaurant-cover-banner h2 { font-size: 24px; }
             .dish-image-box { height: 170px; }
             .meal-info-grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
             .kpi-summary-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -958,23 +1023,23 @@
         <!-- Atmosphere Hero Cover -->
         <div class="restaurant-cover-banner">
             <h2>مرحباً بكم في مطعم Blue Healing</h2>
-            <p>نقدم لكم أرقى الأطباق المحضرة بأجود المكونات الطازجة وأيدي نخبة من الطهاة المحترفين</p>
+            <p>أرقى المأكولات المحضرة يومياً بأعلى المعايير، مع قسم خاص وممتع للأطفال!</p>
             
             <div class="restaurant-features-bar">
                 <span class="feature-item">📍 صالة طعام راقية & خدمة توصيل</span>
                 <span class="feature-item">🕒 يومياً: 12:00 م - 12:00 منتصف الليل</span>
+                <span class="feature-item">🎈 منيو خاص بالأطفال مع هدايا</span>
                 <span class="feature-item">📞 خدمة العملاء: 01000000000</span>
-                <span class="feature-item">✨ خامات طازجة ومعيارية 100%</span>
             </div>
 
             <div class="search-and-filter-box">
-                <input type="text" id="customerSearchInput" placeholder="🔍 ابحث في المنيو عن طبقك المفضل..." oninput="filterCustomerMenu()">
+                <input type="text" id="customerSearchInput" placeholder="🔍 ابحث في المنيو عن طبقك المفضل أو وجبات الأطفال..." oninput="filterCustomerMenu()">
             </div>
         </div>
 
         <!-- Sticky Categories Bar -->
         <div class="categories-filter-bar" id="categoriesFilterBar">
-            <!-- Populated dynamically -->
+            <!-- Populated dynamically from appState.categories -->
         </div>
 
         <!-- Dishes Grid -->
@@ -983,7 +1048,7 @@
         </div>
 
         <div style="text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 13px; border-top: 1px solid var(--border);">
-            ✦ Blue Healing Culinary Operations & Restaurant Management System • 2026 ✦
+            ✦ Blue Healing Restaurant & Hospitality Operations • All rights reserved 2026 ✦
         </div>
     </section>
 
@@ -999,11 +1064,12 @@
                 <span style="color: #1E3A8A;" id="loggedManagerName">المدير العام (Admin)</span>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="btn btn-purple btn-sm" onclick="openAdminManagementModal()">👥 إدارة المدراء والرموز السرية</button>
-                <button class="btn btn-outline btn-sm" onclick="showCustomerView()">👁️ معاينة منيو العملاء</button>
-                <button class="btn btn-outline btn-sm" onclick="openPantryModal()">📦 مكتبة الخامات والأسعار</button>
-                <button class="btn btn-primary btn-sm" onclick="triggerExcelUpload()">📥 رفع خامات من Excel</button>
-                <button class="btn btn-danger btn-sm" onclick="managerLogout()">🚪 تسجيل خروج</button>
+                <button class="btn btn-purple btn-sm" onclick="openCategoriesManagerModal()">📂 تعديل أقسام المنيو</button>
+                <button class="btn btn-purple btn-sm" onclick="openAdminManagementModal()">👥 حسابات المدراء</button>
+                <button class="btn btn-outline btn-sm" onclick="showCustomerView()">👁️ معاينة المنيو</button>
+                <button class="btn btn-outline btn-sm" onclick="openPantryModal()">📦 مكتبة الخامات</button>
+                <button class="btn btn-primary btn-sm" onclick="triggerExcelUpload()">📥 رفع خامات Excel</button>
+                <button class="btn btn-danger btn-sm" onclick="managerLogout()">🚪 خروج</button>
             </div>
         </div>
 
@@ -1020,7 +1086,7 @@
                 <img id="mThumbPreview" class="meal-thumb-preview" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" alt="صورة الوجبة">
                 <div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1;">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                        <span style="font-weight: 800; font-size: 13px; color: #1E293B;">📷 صورة الوجبة المعروضة في منيو العملاء:</span>
+                        <span style="font-weight: 800; font-size: 13px; color: #1E293B;">📷 صورة الوجبة ومحددات العرض في منيو الزبائن:</span>
                         <div style="display: flex; gap: 6px;">
                             <button class="btn btn-primary btn-sm" onclick="triggerMealPhotoUpload()">📁 رفع صورة من جهازك</button>
                             <button class="btn btn-outline btn-sm" onclick="promptPhotoUrl()">🌐 رابط صورة</button>
@@ -1030,12 +1096,7 @@
                         <div class="form-control">
                             <label>قسم الوجبة في المنيو (Category):</label>
                             <select id="mCategory" onchange="updateActiveMealField('category', this.value)">
-                                <option value="دواجن ولحوم">🍖 دواجن ولحوم</option>
-                                <option value="برجر وساندوتشات">🍔 برجر وساندوتشات</option>
-                                <option value="باستا ومكرونات">🍝 باستا ومكرونات</option>
-                                <option value="مأكولات بحرية">🦐 مأكولات بحرية</option>
-                                <option value="مقبلات وسلطات">🥗 مقبلات وسلطات</option>
-                                <option value="حلويات ومشروبات">🍰 حلويات ومشروبات</option>
+                                <!-- Dynamic options rendered from appState.categories -->
                             </select>
                         </div>
                         <div class="form-control">
@@ -1043,6 +1104,7 @@
                             <select id="mBadge" onchange="updateActiveMealField('badge', this.value)">
                                 <option value="⭐ الأكثر طلباً">⭐ الأكثر طلباً</option>
                                 <option value="🔥 طبق الشيف المميز">🔥 طبق الشيف المميز</option>
+                                <option value="🎈 وجبة أطفال مع هدية">🎈 وجبة أطفال مع هدية</option>
                                 <option value="✨ صنف جديد">✨ صنف جديد</option>
                                 <option value="🌱 خيار صحي">🌱 خيار صحي</option>
                                 <option value="">بدون شارة</option>
@@ -1271,7 +1333,7 @@
             </p>
 
             <div class="table-responsive">
-                <table class="admin-table">
+                <table class="manager-data-table">
                     <thead>
                         <tr>
                             <th>الاسم / الصفة</th>
@@ -1286,7 +1348,7 @@
                 </table>
             </div>
 
-            <div class="add-admin-form-box">
+            <div class="manager-sub-box">
                 <h4 style="font-size: 13px; font-weight: 800; color: #1E293B; margin-bottom: 10px;" id="adminFormTitle">
                     ➕ إضافة مدير / مستخدم جديد
                 </h4>
@@ -1317,7 +1379,108 @@
     </div>
 </div>
 
-<!-- Modal 3: Master Pantry Library -->
+<!-- Modal 3: Menu Categories Manager (NEW FEATURE) -->
+<div class="modal-overlay" id="categoriesManagerModal">
+    <div class="modal-content" style="max-width: 620px;">
+        <div class="modal-header">
+            <span>📂 إدارة وتعديل أقسام المنيو (Menu Categories Manager)</span>
+            <span style="cursor: pointer; font-size: 18px;" onclick="closeCategoriesManagerModal()">✕</span>
+        </div>
+        <div class="modal-body">
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                يمكنك إضافة أقسام جديدة، تعديل أسمائها وأيقوناتها، أو حذف أي قسم. تظهر التعديلات فوراً في المنيو واختيارات الوجبات!
+            </p>
+
+            <div class="table-responsive">
+                <table class="manager-data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">الأيقونة</th>
+                            <th>اسم القسم بالمنيو</th>
+                            <th style="width: 120px;">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoriesTableBody">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="manager-sub-box">
+                <h4 style="font-size: 13px; font-weight: 800; color: #1E293B; margin-bottom: 10px;" id="catFormTitle">
+                    ➕ إضافة قسم جديد للمنيو
+                </h4>
+                <div style="display: grid; grid-template-columns: 80px 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div class="form-control">
+                        <label>الأيقونة:</label>
+                        <input type="text" id="newCatIcon" placeholder="مثال: 🍕" style="text-align: center; font-size: 16px;">
+                    </div>
+                    <div class="form-control">
+                        <label>اسم القسم (Category Name):</label>
+                        <input type="text" id="newCatName" placeholder="مثال: بيتزا وفطائر">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button class="btn btn-secondary btn-sm" id="btnCancelEditCat" style="display: none;" onclick="cancelEditCategory()">إلغاء التعديل</button>
+                    <button class="btn btn-purple btn-sm" id="btnSaveCat" onclick="saveCategoryFromForm()">حفظ القسم 💾</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" onclick="closeCategoriesManagerModal()">تم وحفظ الأقسام</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 4: Customer Dish Details Modal (NEW INTERACTIVE ANIMATION) -->
+<div class="modal-overlay" id="dishDetailModal">
+    <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #1E293B, #0F172A);">
+            <span id="detailDishTitleHeader">تفاصيل الطبق</span>
+            <span style="cursor: pointer; font-size: 18px;" onclick="closeDishDetailModal()">✕</span>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+            <img id="detailDishImg" class="detail-dish-img" src="" alt="صورة الوجبة">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 id="detailDishName" style="font-size: 20px; font-weight: 900; color: #0F172A;"></h3>
+                <span id="detailDishCode" class="dish-code-tag"></span>
+            </div>
+
+            <p id="detailDishDesc" style="font-size: 14px; color: #475569; line-height: 1.7; margin-bottom: 16px;"></p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #F8FAFC; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 16px;">
+                <div>
+                    <span style="font-size: 11px; color: #64748B; font-weight: 700;">القسم:</span><br>
+                    <span id="detailDishCat" style="font-size: 13px; font-weight: 800; color: #1E3A8A;"></span>
+                </div>
+                <div>
+                    <span style="font-size: 11px; color: #64748B; font-weight: 700;">وزن الحصة:</span><br>
+                    <span id="detailDishPortion" style="font-size: 13px; font-weight: 800; color: #0F172A;"></span>
+                </div>
+            </div>
+
+            <div id="detailDishIngredientsBox" style="margin-bottom: 16px;">
+                <h5 style="font-size: 12px; font-weight: 800; color: #334155; margin-bottom: 6px;">مكونات الطبق الأساسية:</h5>
+                <p id="detailDishIngredientsList" style="font-size: 13px; color: #64748B; line-height: 1.6;"></p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 14px;">
+                <div>
+                    <div class="price-label">السعر الرسمي</div>
+                    <div id="detailDishPrice" class="dish-price"></div>
+                </div>
+                <a id="detailDishWhatsappLink" href="#" target="_blank" class="btn btn-whatsapp">
+                    <span>طلب هذا الطبق واتساب</span>
+                    <span>📲</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 5: Master Pantry Library -->
 <div class="modal-overlay" id="pantryModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -1333,7 +1496,7 @@
                 <button class="btn btn-primary btn-sm" onclick="addNewPantryItemPrompt()">➕ خامة جديدة</button>
             </div>
             <div class="table-responsive" style="max-height: 400px;">
-                <table class="library-list-table">
+                <table class="manager-data-table">
                     <thead>
                         <tr>
                             <th>اسم الخامة</th>
@@ -1360,6 +1523,18 @@
     const segmentColors = [
         "#2563EB", "#06B6D4", "#10B981", "#F59E0B", "#8B5CF6", 
         "#EC4899", "#14B8A6", "#64748B", "#F97316", "#84CC16"
+    ];
+
+    // Default Categories with Icons (includes Children's Menu)
+    const defaultCategories = [
+        { id: "cat_all", name: "جميع الأطباق", icon: "🍽️", isFixed: true },
+        { id: "cat_kids", name: "وجبات الأطفال", icon: "🎈", isFixed: false },
+        { id: "cat_poultry", name: "دواجن ولحوم", icon: "🍖", isFixed: false },
+        { id: "cat_burger", name: "برجر وساندوتشات", icon: "🍔", isFixed: false },
+        { id: "cat_pasta", name: "باستا ومكرونات", icon: "🍝", isFixed: false },
+        { id: "cat_seafood", name: "مأكولات بحرية", icon: "🦐", isFixed: false },
+        { id: "cat_appetizers", name: "مقبلات وسلطات", icon: "🥗", isFixed: false },
+        { id: "cat_dessert", name: "حلويات ومشروبات", icon: "🍰", isFixed: false }
     ];
 
     const defaultPantry = [
@@ -1406,8 +1581,9 @@
         adminsList: [
             { id: "adm_1", name: "المدير العام", username: "admin", passcode: "bluehealing123" }
         ],
+        categories: [...defaultCategories],
         currentView: "customer",
-        selectedCategory: "all",
+        selectedCategory: "جميع الأطباق",
         activeTab: "meal_0",
         pantry: [],
         meals: [
@@ -1432,6 +1608,27 @@
                     { name: "بصل أحمر طازج (Red Onion)", date: "2026-11-13", qty: 200, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 18 },
                     { name: "طماطم بلدي طازجة (Tomato)", date: "2026-11-13", qty: 150, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 20 },
                     { name: "علبة وجبة تيك أواي فاخرة (Box Packaging)", date: "2026-11-01", qty: 4, rUnit: "قطعة / حصة", pUnit: "قطعة / حصة", price: 6 }
+                ]
+            },
+            {
+                id: "meal_kids_1",
+                itemNo: "#KIDS-1",
+                name: "وجبة كيدز تشيكن ناجتس المقرمشة",
+                category: "وجبات الأطفال",
+                badge: "🎈 وجبة أطفال مع هدية",
+                image: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=600&q=80",
+                description: "6 قطع ناجتس دجاج مقرمشة وذهبية من صدور الدجاج الصافية 100%، تقدم مع بطاطس أصابع مقرمشة وعلبة عصير فواكه طبيعي ولعبة مفاجأة للأبطال الصغار!",
+                priceDate: "2026-11-13",
+                portions: 2,
+                portionSize: "220 gm",
+                seasoning: 4,
+                wastePct: 3,
+                multiplier: 3.1,
+                ingredients: [
+                    { name: "صدور دجاج مخلي (Chicken Breast)", date: "2026-11-13", qty: 300, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 220 },
+                    { name: "بطاطس تحمير / طبخ (Potato)", date: "2026-11-13", qty: 250, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 25 },
+                    { name: "زيت طهي ذرة نقي (Corn Oil)", date: "2026-11-13", qty: 40, rUnit: "مليلتر (ml)", pUnit: "لتر (L)", price: 75 },
+                    { name: "علبة وجبة تيك أواي فاخرة (Box Packaging)", date: "2026-11-13", qty: 2, rUnit: "قطعة / حصة", pUnit: "قطعة / حصة", price: 6 }
                 ]
             },
             {
@@ -1482,6 +1679,7 @@
     };
 
     let editingAdminId = null;
+    let editingCatId = null;
 
     // Load & Save State
     function initStorage() {
@@ -1492,6 +1690,16 @@
                 if (parsed.meals && parsed.meals.length > 0) {
                     appState.meals = parsed.meals;
                     appState.activeTab = parsed.activeTab || appState.meals[0].id;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        const savedCats = localStorage.getItem("blue_healing_categories");
+        if (savedCats) {
+            try {
+                const parsed = JSON.parse(savedCats);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    appState.categories = parsed;
                 }
             } catch(e) { console.error(e); }
         }
@@ -1528,10 +1736,11 @@
                 activeTab: appState.activeTab,
                 meals: appState.meals
             }));
+            localStorage.setItem("blue_healing_categories", JSON.stringify(appState.categories));
             localStorage.setItem("blue_healing_pantry", JSON.stringify(appState.pantry));
             localStorage.setItem("blue_healing_admins", JSON.stringify(appState.adminsList));
         } catch(e) {
-            console.warn("Storage quota limit reached, consider using URL images rather than heavy base64.", e);
+            console.warn("Storage quota limit reached.", e);
         }
     }
 
@@ -1560,6 +1769,7 @@
                     🚪 خروج
                 </button>
             `;
+            renderCategorySelectOptions();
             renderTabs();
             renderActiveMeal();
         } else {
@@ -1617,7 +1827,7 @@
             closeLoginModal();
             setView("manager");
         } else {
-            alert("❌ خطأ: اسم المستخدم أو الرمز السري غير صحيح!\nيرجى التأكد من كتابة البيانات بدقة.");
+            alert("❌ خطأ: اسم المستخدم أو الرمز السري غير صحيح!");
         }
     }
 
@@ -1679,30 +1889,153 @@
     }
 
     // ========================================================
-    // CUSTOMER MENU: CATEGORIES & CARDS WITH PHOTOS
+    // CATEGORIES MANAGER CODE (NEW FEATURE)
+    // ========================================================
+    function openCategoriesManagerModal() {
+        cancelEditCategory();
+        renderCategoriesTable();
+        document.getElementById("categoriesManagerModal").classList.add("active");
+    }
+
+    function closeCategoriesManagerModal() {
+        document.getElementById("categoriesManagerModal").classList.remove("active");
+    }
+
+    function renderCategoriesTable() {
+        const tbody = document.getElementById("categoriesTableBody");
+        tbody.innerHTML = "";
+
+        appState.categories.forEach(cat => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="font-size: 20px; text-align: center;">${cat.icon || '🍽️'}</td>
+                <td>
+                    <b>${cat.name}</b>
+                    ${cat.name === 'وجبات الأطفال' ? '<span style="font-size:11px; background:#FDF2F8; color:#DB2777; padding:2px 6px; border-radius:4px; margin-right:6px; font-weight:bold;">منيو أطفال</span>' : ''}
+                </td>
+                <td>
+                    ${!cat.isFixed ? `
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn btn-outline btn-sm" onclick="startEditCategory('${cat.id}')">✏️</button>
+                            <button class="btn btn-outline btn-sm" style="color:#EF4444; border-color:#FCA5A5;" onclick="deleteCategory('${cat.id}')">🗑️</button>
+                        </div>
+                    ` : '<span style="font-size:11px; color:#94A3B8;">افتراضي ثابت</span>'}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function startEditCategory(catId) {
+        const cat = appState.categories.find(c => c.id === catId);
+        if (!cat) return;
+
+        editingCatId = catId;
+        document.getElementById("catFormTitle").innerText = `✏️ تعديل قسم: ${cat.name}`;
+        document.getElementById("newCatIcon").value = cat.icon || "🍽️";
+        document.getElementById("newCatName").value = cat.name;
+        document.getElementById("btnCancelEditCat").style.display = "inline-flex";
+        document.getElementById("btnSaveCat").innerText = "تحديث القسم 💾";
+        document.getElementById("newCatName").focus();
+    }
+
+    function cancelEditCategory() {
+        editingCatId = null;
+        document.getElementById("catFormTitle").innerText = "➕ إضافة قسم جديد للمنيو";
+        document.getElementById("newCatIcon").value = "";
+        document.getElementById("newCatName").value = "";
+        document.getElementById("btnCancelEditCat").style.display = "none";
+        document.getElementById("btnSaveCat").innerText = "حفظ القسم 💾";
+    }
+
+    function saveCategoryFromForm() {
+        const icon = document.getElementById("newCatIcon").value.trim() || "🍽️";
+        const name = document.getElementById("newCatName").value.trim();
+
+        if (!name) {
+            alert("يرجى إدخال اسم القسم!");
+            return;
+        }
+
+        if (editingCatId) {
+            const cat = appState.categories.find(c => c.id === editingCatId);
+            if (cat) {
+                const oldName = cat.name;
+                cat.icon = icon;
+                cat.name = name;
+
+                // update any meal that used the old category name
+                appState.meals.forEach(m => {
+                    if (m.category === oldName) m.category = name;
+                });
+                alert(`✅ تم تحديث قسم (${name}) بنجاح!`);
+            }
+        } else {
+            const duplicate = appState.categories.find(c => c.name.toLowerCase() === name.toLowerCase());
+            if (duplicate) {
+                alert("هذا القسم موجود بالفعل في القائمة!");
+                return;
+            }
+
+            const newCat = {
+                id: "cat_" + Date.now(),
+                name: name,
+                icon: icon,
+                isFixed: false
+            };
+            appState.categories.push(newCat);
+            alert(`✅ تم إضافة قسم (${name}) للمنيو بنجاح!`);
+        }
+
+        saveState();
+        cancelEditCategory();
+        renderCategoriesTable();
+        renderCategorySelectOptions();
+        renderCategoryPills();
+    }
+
+    function deleteCategory(catId) {
+        const cat = appState.categories.find(c => c.id === catId);
+        if (!cat) return;
+
+        if (confirm(`هل أنت متأكد من حذف قسم (${cat.name}) من المنيو؟`)) {
+            appState.categories = appState.categories.filter(c => c.id !== catId);
+            saveState();
+            renderCategoriesTable();
+            renderCategorySelectOptions();
+            renderCategoryPills();
+        }
+    }
+
+    function renderCategorySelectOptions() {
+        const select = document.getElementById("mCategory");
+        if (!select) return;
+        select.innerHTML = "";
+
+        appState.categories.filter(c => !c.isFixed).forEach(cat => {
+            const opt = document.createElement("option");
+            opt.value = cat.name;
+            opt.innerText = `${cat.icon || '🍽️'} ${cat.name}`;
+            select.appendChild(opt);
+        });
+    }
+
+    // ========================================================
+    // CUSTOMER MENU: CATEGORIES & CARDS WITH DETAIL MODAL
     // ========================================================
     function renderCategoryPills() {
         const bar = document.getElementById("categoriesFilterBar");
         bar.innerHTML = "";
 
-        // Extract distinct categories from meals
-        const categories = ["all", "دواجن ولحوم", "برجر وساندوتشات", "باستا ومكرونات", "مأكولات بحرية", "مقبلات وسلطات", "حلويات ومشروبات"];
-
-        categories.forEach(cat => {
+        appState.categories.forEach(cat => {
             const pill = document.createElement("div");
-            pill.className = `category-pill ${appState.selectedCategory === cat ? 'active' : ''}`;
+            const isKids = cat.name.includes("أطفال");
+            const isActive = appState.selectedCategory === cat.name;
+            pill.className = `category-pill ${isActive ? (isKids ? 'kids-active' : 'active') : ''}`;
             
-            let label = "🍽️ جميع الأطباق";
-            if (cat === "دواجن ولحوم") label = "🍖 دواجن ولحوم";
-            else if (cat === "برجر وساندوتشات") label = "🍔 برجر وساندوتشات";
-            else if (cat === "باستا ومكرونات") label = "🍝 باستا ومكرونات";
-            else if (cat === "مأكولات بحرية") label = "🦐 مأكولات بحرية";
-            else if (cat === "مقبلات وسلطات") label = "🥗 مقبلات وسلطات";
-            else if (cat === "حلويات ومشروبات") label = "🍰 حلويات ومشروبات";
-
-            pill.innerText = label;
+            pill.innerHTML = `<span>${cat.icon || '🍽️'}</span> <span>${cat.name}</span>`;
             pill.onclick = () => {
-                appState.selectedCategory = cat;
+                appState.selectedCategory = cat.name;
                 renderCategoryPills();
                 filterCustomerMenu();
             };
@@ -1716,8 +2049,7 @@
 
         let list = filteredMeals || appState.meals;
 
-        // Apply category filter if not "all"
-        if (appState.selectedCategory && appState.selectedCategory !== "all" && !filteredMeals) {
+        if (appState.selectedCategory && appState.selectedCategory !== "جميع الأطباق" && !filteredMeals) {
             list = list.filter(m => (m.category || "دواجن ولحوم") === appState.selectedCategory);
         }
 
@@ -1731,25 +2063,26 @@
         list.forEach(meal => {
             const f = calculateMealFinancials(meal);
             const card = document.createElement("div");
-            card.className = "real-dish-card";
+            const isKids = (meal.category || "").includes("أطفال") || (meal.badge || "").includes("أطفال");
+            card.className = `real-dish-card ${isKids ? 'is-kids-meal' : ''}`;
 
-            const defaultImg = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80";
+            const defaultImg = isKids ? 
+                "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=600&q=80" : 
+                "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80";
             const photoSrc = meal.image || defaultImg;
 
-            // Key ingredients preview text
             const ingPreview = (meal.ingredients || []).map(i => i.name.split('(')[0].trim()).slice(0, 4).join(" • ");
-
-            // WhatsApp Order Message link
             const whatsappText = encodeURIComponent(`مرحباً مطعم Blue Healing، أود طلب وجبة: ${meal.name} (كود: ${meal.itemNo}) بسعر ${f.sellingPrice.toFixed(0)} ج.م.`);
             const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
 
             card.innerHTML = `
-                <div class="dish-image-box">
+                <div class="dish-image-box" onclick="openDishDetailModal('${meal.id}')">
                     <img class="dish-img" src="${photoSrc}" alt="${meal.name}" loading="lazy" onerror="this.src='${defaultImg}'">
-                    ${meal.badge ? `<span class="dish-floating-badge">${meal.badge}</span>` : ''}
+                    ${meal.badge ? `<span class="dish-floating-badge" style="${isKids ? 'background:#DB2777; color:white;' : ''}">${meal.badge}</span>` : ''}
                     <span class="dish-portion-badge">⚖️ ${meal.portionSize || 'حصة مميزة'}</span>
+                    <span class="dish-rating-badge">★ 4.9</span>
                 </div>
-                <div class="dish-card-content">
+                <div class="dish-card-content" onclick="openDishDetailModal('${meal.id}')">
                     <div>
                         <div class="dish-header-row">
                             <h3 class="dish-title">${meal.name || 'طبق مميز'}</h3>
@@ -1758,7 +2091,7 @@
                         <p class="dish-description">${meal.description || 'طبق محضر بعناية من أفضل المكونات المعيارية الطازجة.'}</p>
                         ${ingPreview ? `<div class="dish-ingredients-preview"><b>المكونات:</b> ${ingPreview}</div>` : ''}
                     </div>
-                    <div class="dish-footer-row">
+                    <div class="dish-footer-row" onclick="event.stopPropagation()">
                         <div class="price-container">
                             <span class="price-label">السعر الرسمي</span>
                             <span class="dish-price">${f.sellingPrice.toFixed(0)} <span style="font-size:13px; font-weight:700;">ج.م</span></span>
@@ -1778,7 +2111,7 @@
         const q = (document.getElementById("customerSearchInput").value || "").toLowerCase().trim();
         let list = appState.meals;
 
-        if (appState.selectedCategory && appState.selectedCategory !== "all") {
+        if (appState.selectedCategory && appState.selectedCategory !== "جميع الأطباق") {
             list = list.filter(m => (m.category || "دواجن ولحوم") === appState.selectedCategory);
         }
 
@@ -1791,6 +2124,38 @@
             );
         }
         renderCustomerMenu(list);
+    }
+
+    // Dish Detail Modal for Customer
+    function openDishDetailModal(mealId) {
+        const meal = appState.meals.find(m => m.id === mealId);
+        if (!meal) return;
+        const f = calculateMealFinancials(meal);
+
+        const defaultImg = (meal.category || "").includes("أطفال") ?
+            "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=600&q=80" : 
+            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80";
+
+        document.getElementById("detailDishTitleHeader").innerText = meal.name;
+        document.getElementById("detailDishImg").src = meal.image || defaultImg;
+        document.getElementById("detailDishName").innerText = meal.name;
+        document.getElementById("detailDishCode").innerText = meal.itemNo || "#";
+        document.getElementById("detailDishDesc").innerText = meal.description || "طبق محضر يومياً من أجود الخامات الطازجة بأعلى درجات العناية والجودة.";
+        document.getElementById("detailDishCat").innerText = meal.category || "عام";
+        document.getElementById("detailDishPortion").innerText = meal.portionSize || "حصة فردية كافية";
+        
+        const ingNames = (meal.ingredients || []).map(i => i.name.split('(')[0].trim()).join(" • ");
+        document.getElementById("detailDishIngredientsList").innerText = ingNames || "مكونات وتوابل طازجة";
+        document.getElementById("detailDishPrice").innerHTML = `${f.sellingPrice.toFixed(0)} <span style="font-size:14px; font-weight:700;">ج.م</span>`;
+
+        const whatsappText = encodeURIComponent(`مرحباً مطعم Blue Healing، أود طلب وجبة: ${meal.name} (كود: ${meal.itemNo}) بسعر ${f.sellingPrice.toFixed(0)} ج.م.`);
+        document.getElementById("detailDishWhatsappLink").href = `https://wa.me/?text=${whatsappText}`;
+
+        document.getElementById("dishDetailModal").classList.add("active");
+    }
+
+    function closeDishDetailModal() {
+        document.getElementById("dishDetailModal").classList.remove("active");
     }
 
     // ========================================================
@@ -1808,7 +2173,6 @@
         reader.onload = function(e) {
             const img = new Image();
             img.onload = function() {
-                // Resize image via canvas to keep it lightweight (<80KB)
                 const canvas = document.createElement("canvas");
                 const maxDim = 700;
                 let w = img.width, h = img.height;
@@ -1961,6 +2325,8 @@
 
     function renderActiveMeal() {
         const meal = getActiveMeal();
+        renderCategorySelectOptions();
+
         document.getElementById("mItemNo").value = meal.itemNo || "";
         document.getElementById("mName").value = meal.name || "";
         document.getElementById("mCategory").value = meal.category || "دواجن ولحوم";
