@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Healing • نظام حساب وتكلفة الوجبات وتسعير المنيو</title>
+    <!-- Google Fonts for Arabic & Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --brand-primary: #0F172A;
+            --brand-navy: #1E293B;
+            --brand-blue: #2563EB;
+            --brand-cyan: #06B6D4;
+            --brand-gradient: linear-gradient(135deg, #0F172A 0%, #1E3A8A 50%, #2563EB 100%);
+            --accent-green: #059669;
+            --accent-green-bg: #ECFDF5;
+            --accent-amber: #D97706;
+            --accent-purple: #7C3AED;
+            --bg-body: #F1F5F9;
+            --card-bg: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', 'Plus Jakarta Sans', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 24px;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 45%);
+        }
+
+        .app-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-hover);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            overflow: hidden;
+        }
+
+        /* Top Brand Banner */
+        .top-brand-bar {
+            background: #090D16;
+            color: #94A3B8;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), rgba(37, 99, 235, 0.15));
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: #38BDF8;
+            padding: 4px 14px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .brand-badge-pill .sparkle {
+            color: #38BDF8;
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Hero Header */
+        .hero-header {
+            background: var(--brand-gradient);
+            color: white;
+            padding: 36px 36px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-title-box h1 {
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title-box h1 .team-tag {
+            background: #06B6D4;
+            color: #0F172A;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 6px;
+            vertical-align: middle;
+        }
+
+        .header-title-box p {
+            font-size: 14px;
+            color: #BFDBFE;
+            max-width: 650px;
+            line-height: 1.5;
+        }
+
+        .header-stats-summary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-md);
+            padding: 14px 22px;
+            text-align: center;
+        }
+
+        .header-stats-summary .label {
+            font-size: 12px;
+            color: #93C5FD;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header-stats-summary .val {
+            font-size: 26px;
+            font-weight: 900;
+            color: #34D399;
+        }
+
+        /* Main Workspace */
+        .workspace {
+            padding: 28px 36px;
+        }
+
+        /* Section Headings */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #F1F5F9;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--brand-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon-chip {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #EFF6FF;
+            color: var(--brand-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* Form Grid Cards */
+        .info-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            background: #F8FAFC;
+            padding: 22px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 28px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .field-group label span.code {
+            color: var(--brand-blue);
+            font-size: 11px;
+            font-family: monospace;
+            background: #EFF6FF;
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+
+        .field-group input, .field-group select {
+            padding: 10px 14px;
+            border: 1.5px solid #CBD5E1;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: white;
+            color: var(--text-main);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .field-group input:focus, .field-group select:focus {
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .field-group input.date-input {
+            color: #1E3A8A;
+            font-family: inherit;
+        }
+
+        /* Table Design */
+        .table-wrapper {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-subtle);
+            margin-bottom: 16px;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        .modern-table thead tr.main-head th {
+            background: #1E293B;
+            color: white;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modern-table thead tr.sub-head th {
+            background: #2563EB;
+            color: #EFF6FF;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .modern-table tbody tr {
+            border-bottom: 1px solid #F1F5F9;
+            transition: background 0.15s;
+        }
+
+        .modern-table tbody tr:hover {
+            background-color: #F8FAFC;
+        }
+
+        .modern-table td {
+            padding: 10px 12px;
+            vertical-align: middle;
+            border-left: 1px solid #F1F5F9;
+        }
+
+        .modern-table input, .modern-table select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .modern-table input:focus, .modern-table select:focus {
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+
+        .date-cell input {
+            font-size: 12px;
+            color: #475569;
+            text-align: center;
+            background: #F8FAFC;
+        }
+
+        .cost-col {
+            background: #F0FDF4;
+            font-weight: 800;
+            color: #166534;
+            text-align: center;
+            font-size: 14px;
+            min-width: 110px;
+        }
+
+        /* Action Buttons */
+        .btn-toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--brand-blue);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1D4ED8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #E2E8F0;
+            color: #334155;
+        }
+        .btn-secondary:hover {
+            background: #CBD5E1;
+        }
+
+        .btn-danger-ghost {
+            background: transparent;
+            color: #EF4444;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+        .btn-danger-ghost:hover {
+            background: #FEE2E2;
+        }
+
+        .btn-accent-green {
+            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+            color: white;
+            font-size: 15px;
+            padding: 12px 24px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+        .btn-accent-green:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        /* Visual Cost Breakdown Progress Bar */
+        .breakdown-box {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
+            margin-bottom: 28px;
+        }
+
+        .breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .breakdown-bar {
+            height: 18px;
+            background: #E2E8F0;
+            border-radius: 9999px;
+            overflow: hidden;
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .breakdown-segment {
+            height: 100%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .breakdown-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .breakdown-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .chip-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* KPI Result Cards */
+        .kpi-deck {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-box {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 18px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.2s ease;
+        }
+
+        .kpi-box:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .kpi-box .tag {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kpi-box .amount {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--brand-primary);
+        }
+
+        .kpi-box .subtext {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .kpi-box.featured-gold {
+            background: #FEF3C7;
+            border: 1px solid #F59E0B;
+        }
+        .kpi-box.featured-gold .amount {
+            color: #B45309;
+        }
+
+        .kpi-box.featured-purple {
+            background: #FAF5FF;
+            border: 1.5px solid #A855F7;
+        }
+        .kpi-box.featured-purple .amount {
+            color: #6B21A8;
+        }
+
+        .kpi-box.featured-green {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border: 2px solid #059669;
+        }
+        .kpi-box.featured-green .amount {
+            color: #065F46;
+            font-size: 26px;
+        }
+
+        /* Footer & Actions */
+        .workspace-footer {
+            border-top: 2px dashed #E2E8F0;
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .signature-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .signature-avatar {
+            width: 44px;
+            height: 44px;
+            background: var(--brand-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .signature-text h4 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--brand-primary);
+        }
+
+        .signature-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .workspace { padding: 18px; }
+            .hero-header { padding: 24px; }
+            .header-stats-summary { width: 100%; }
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .app-container { box-shadow: none; border: none; }
+            .top-brand-bar, .btn-toolbar, .workspace-footer .btn, .btn-danger-ghost { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Top Branding Strip -->
+    <div class="top-brand-bar">
+        <div class="brand-badge-pill">
+            <span class="sparkle">✦</span>
+            <span>BLUE HEALING</span>
+            <span>•</span>
+            <span>Operations & Menu Intelligence</span>
+        </div>
+        <div style="display: flex; gap: 20px;">
+            <span>نظام حساب تكلفة الوصفات المعيارية</span>
+            <span id="currentDateDisplay">--/--/----</span>
+        </div>
+    </div>
+
+    <!-- Hero Header -->
+    <div class="hero-header">
+        <div class="header-content">
+            <div class="header-title-box">
+                <h1>
+                    <span>كارت تكلفة الوصفة المعيارية</span>
+                    <span class="team-tag">Blue Healing</span>
+                </h1>
+                <p>أداة احترافية لحساب تكلفة خامات الأطباق بدقة، تسجيل تواريخ تسعير الموردين، احتساب نسبة الهالك (5%)، ومضاعف التسعير (3.1 - 3.6) لتحديد سعر البيع المثالي.</p>
+            </div>
+            <div class="header-stats-summary">
+                <div class="label">سعر البيع المقترح للحصة</div>
+                <div class="val" id="topSellingPrice">0.00 ج.م</div>
+                <div style="font-size: 11px; color: #E0E7FF; margin-top: 2px;" id="topProfitMargin">هامش الربح: --%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+        
+        <!-- Section 1: Meal Parameters -->
+        <div class="section-header">
+            <div class="section-title">
+                <div class="icon-chip">🍽️</div>
+                <span>بيانات الوجبة ومحددات التسعير (Meal Information)</span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;">
+                الفريق المسؤول: <b style="color: var(--brand-blue);">Blue Healing</b>
+            </div>
+        </div>
+
+        <div class="info-card-grid">
+            <div class="field-group">
+                <label>
+                    <span>رقم / كود الصنف:</span>
+                    <span class="code">1. Item No</span>
+                </label>
+                <input type="text" id="itemNo" value="#101">
+            </div>
+
+            <div class="field-group" style="grid-column: span 2;">
+                <label>
+                    <span>اسم الوجبة المعيارية:</span>
+                    <span class="code">Recipe Name</span>
+                </label>
+                <input type="text" id="mealName" value="وجبة دجاج مشوي مع أرز بسمتي">
+            </div>
+
+            <div class="field-group">
+                <label>
+                    <span>تاريخ تسعير الوجبة:</span>
+                    <span class="code">Price Date</span>
+                </label>
+                <input type="date" id="mealPriceDate" class="date-input" onchange="syncDates()">
+            </div>
+
+            <div class="field-group">
+                <label>
+                    <span>عدد الحصص بالطبخة:</span>
+                    <span class="code">2. No. of Portions</span>
+                </label>
+                <input type="number" id="portions" value="4" min="1" oninput="calculateAll()">
+            </div>
+
+            <div class="field-group">
+                <label>
+                    <span>حجم / وزن الوجبة:</span>
+                    <span class="code">3. Size of Portion</span>
+                </label>
+                <input type="text" id="portionSize" value="350 gm">
+            </div>
+
+            <div class="field-group">
+                <label>
+                    <span>تكلفة التوابل والبهارات:</span>
+                    <span class="code">Seasoning L.E</span>
+                </label>
+                <input type="number" id="seasoning" value="10" min="0" step="0.5" oninput="calculateAll()">
+            </div>
+
+            <div class="field-group">
+                <label>
+                    <span>نسبة الهالك / الفاقد:</span>
+                    <span class="code">5% Waste</span>
+                </label>
+                <input type="number" id="wastePct" value="5" min="0" max="50" oninput="calculateAll()">
+            </div>
+
+            <div class="field-group">
+                <label>
+                    <span>مُعامل الضرب (Multiplier):</span>
+                    <span class="code">3.1 - 3.6</span>
+                </label>
+                <input type="number" id="multiplier" value="3.33" step="0.05" oninput="onMultiplierChanged()">
+            </div>
+
+            <div class="field-group">
+                <label>
+                    <span>نسبة تكلفة الطعام:</span>
+                    <span class="code">5. Food Cost %</span>
+                </label>
+                <input type="number" id="foodCostPct" value="30.0" step="0.5" oninput="onFoodCostChanged()">
+            </div>
+        </div>
+
+        <!-- Section 2: Ingredients Table -->
+        <div class="section-header">
+            <div class="section-title">
+                <div class="icon-chip">🥩</div>
+                <span>جدول المكونات وتواريخ الشراء (Standard Recipe Table)</span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted);">
+                تنبيه: يمكنك تسجيل تاريخ السعر لكل خامة لمتابعة فواتير الموردين
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="modern-table" id="ingredientsTable">
+                <thead>
+                    <tr class="main-head">
+                        <th rowspan="2" style="width: 25%;">Ingredients<br>اسم المكون</th>
+                        <th rowspan="2" style="width: 14%;">Price Date<br>تاريخ السعر</th>
+                        <th colspan="2" style="width: 22%;">Recipe<br>مقادير الوصفة</th>
+                        <th colspan="2" style="width: 24%;">Price / Unit<br>سعر الشراء</th>
+                        <th rowspan="2" style="width: 12%;">Cost L.E<br>التكلفة بالجنيه</th>
+                        <th rowspan="2" style="width: 40px;"></th>
+                    </tr>
+                    <tr class="sub-head">
+                        <th>Qty (الكمية)</th>
+                        <th>Unit (الوحدة)</th>
+                        <th>Unit (الوحدة)</th>
+                        <th>Price (السعر ج.م)</th>
+                    </tr>
+                </thead>
+                <tbody id="ingredientsBody">
+                    <!-- Dynamic Rows populated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-toolbar">
+            <button class="btn btn-primary" onclick="addEmptyRow()">➕ إضافة خامة جديدة</button>
+            <button class="btn btn-secondary" onclick="loadSampleRecipe('chicken')">🍗 مثال: وجبة دجاج وأرز</button>
+            <button class="btn btn-secondary" onclick="loadSampleRecipe('burger')">🍔 مثال: برجر لحم كلاسيك</button>
+            <button class="btn btn-secondary" onclick="loadSampleRecipe('pasta')">🍝 مثال: باستا صوص ألفريدو</button>
+        </div>
+
+        <!-- Creative Feature: Cost Breakdown Progress Bar -->
+        <div class="breakdown-box">
+            <div class="breakdown-header">
+                <span>📊 التوزيع النسبي لتكلفة مكونات الوجبة (Cost Distribution)</span>
+                <span id="breakdownStatus">جاري الحساب...</span>
+            </div>
+            <div class="breakdown-bar" id="breakdownBar">
+                <!-- Color segments rendered dynamically -->
+            </div>
+            <div class="breakdown-chips" id="breakdownChips">
+                <!-- Legend chips -->
+            </div>
+        </div>
+
+        <!-- Section 3: Summary Cards & Profit Simulator -->
+        <div class="section-header">
+            <div class="section-title">
+                <div class="icon-chip">📈</div>
+                <span>ملخص الحسابات ومؤشرات الربحية (Financial KPIs)</span>
+            </div>
+        </div>
+
+        <div class="kpi-deck">
+            <div class="kpi-box">
+                <div class="tag">المجموع الفرعي (Sub-total)</div>
+                <div class="amount" id="subtotalVal">0.00 ج.م</div>
+                <div class="subtext">تكلفة الخامات + التوابل</div>
+            </div>
+
+            <div class="kpi-box featured-gold">
+                <div class="tag">نسبة الهالك (5% Waste)</div>
+                <div class="amount" id="wasteVal">0.00 ج.م</div>
+                <div class="subtext">فاقد التقشير والطهي والتسوية</div>
+            </div>
+
+            <div class="kpi-box">
+                <div class="tag">إجمالي تكلفة الطبخة (Total Cost)</div>
+                <div class="amount" id="totalCostVal">0.00 ج.م</div>
+                <div class="subtext">المجموع الفرعي + الهالك</div>
+            </div>
+
+            <div class="kpi-box featured-purple">
+                <div class="tag">4. تكلفة الحصة الواحدة (Cost/Portion)</div>
+                <div class="amount" id="portionCostVal">0.00 ج.م</div>
+                <div class="subtext">إجمالي التكلفة ÷ عدد الحصص</div>
+            </div>
+
+            <div class="kpi-box featured-green">
+                <div class="tag">6. سعر البيع المقترح (Selling Price)</div>
+                <div class="amount" id="sellingPriceVal">0.00 ج.م</div>
+                <div class="subtext">تكلفة الوجبة × معامل التسعير</div>
+            </div>
+
+            <div class="kpi-box" style="border: 1px solid #10B981;">
+                <div class="tag">صافي هامش الربح للحصة</div>
+                <div class="amount" style="color: #059669;" id="grossProfitVal">0.00 ج.م</div>
+                <div class="subtext" id="grossMarginPct">هامش الربح: --%</div>
+            </div>
+        </div>
+
+        <!-- Workspace Footer / Branding Signature -->
+        <div class="workspace-footer">
+            <div class="signature-box">
+                <div class="signature-avatar">BH</div>
+                <div class="signature-text">
+                    <h4>فريق Blue Healing</h4>
+                    <p>نظام التدقيق والتسعير المعياري للمطاعم والمنشآت الغذائية</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="saveToLocalStorage()">💾 حفظ الوجبة بالمتصفح</button>
+                <button class="btn btn-secondary" onclick="window.print()">🖨️ طباعة كارت الوصفة (Print/PDF)</button>
+                <button class="btn btn-accent-green" onclick="exportToExcel()">📊 تصدير شيت إكسيل فاخر معتمد (.xlsx)</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const colors = ["#2563EB", "#06B6D4", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#64748B", "#14B8A6"];
+
+    const sampleRecipes = {
+        chicken: {
+            itemNo: "#101",
+            name: "وجبة دجاج مشوي مع أرز بسمتي",
+            portions: 4,
+            size: "350 gm",
+            seasoning: 10,
+            waste: 5,
+            mult: 3.33,
+            ingredients: [
+                { name: "صدور دجاج مخلي (Chicken Breast)", date: "2026-11-12", qty: 800, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 220 },
+                { name: "أرز بسمتي هندي (Basmati Rice)", date: "2026-11-10", qty: 400, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 85 },
+                { name: "زيت طهي / زبدة (Cooking Oil)", date: "2026-11-08", qty: 60, rUnit: "مليلتر (ml)", pUnit: "لتر (L)", price: 70 },
+                { name: "خضار مشكل طازج (Vegetables)", date: "2026-11-13", qty: 300, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 25 },
+                { name: "علب وتغليف تقديم (Packaging)", date: "2026-11-01", qty: 4, rUnit: "قطعة / حصة", pUnit: "قطعة / حصة", price: 5 }
+            ]
+        },
+        burger: {
+            itemNo: "#202",
+            name: "ساندوتش برجر بقري سوبر ديلوكس",
+            portions: 2,
+            size: "220 gm",
+            seasoning: 6,
+            waste: 4,
+            mult: 3.25,
+            ingredients: [
+                { name: "لحم بقري مفروم ممتاز", date: "2026-11-13", qty: 400, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 340 },
+                { name: "خبز برجر بريوش فاخر", date: "2026-11-13", qty: 2, rUnit: "قطعة / حصة", pUnit: "قطعة / حصة", price: 12 },
+                { name: "جبن شيدر أحمر مستورد", date: "2026-11-11", qty: 60, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 300 },
+                { name: "خس وخيار مخلل وطماطم", date: "2026-11-13", qty: 100, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 30 },
+                { name: "صوص برجر سرّي خاص", date: "2026-11-10", qty: 50, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 120 }
+            ]
+        },
+        pasta: {
+            itemNo: "#303",
+            name: "باستا فوتوتشيني ألفريدو بالدجاج",
+            portions: 3,
+            size: "300 gm",
+            seasoning: 8,
+            waste: 5,
+            mult: 3.4,
+            ingredients: [
+                { name: "مكرونة فوتوتشيني إيطالية", date: "2026-11-09", qty: 350, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 65 },
+                { name: "صدور دجاج شرائح", date: "2026-11-12", qty: 300, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 220 },
+                { name: "كريمة طهي ألبان 35%", date: "2026-11-12", qty: 250, rUnit: "مليلتر (ml)", pUnit: "لتر (L)", price: 160 },
+                { name: "مشروم طازج ومشروم معلب", date: "2026-11-11", qty: 150, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 110 },
+                { name: "جبن بارميزان مبشور", date: "2026-11-05", qty: 50, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 500 }
+            ]
+        }
+    };
+
+    function setInitialDate() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("mealPriceDate").value = today;
+        document.getElementById("currentDateDisplay").innerText = "التاريخ: " + today;
+    }
+
+    function syncDates() {
+        const masterDate = document.getElementById("mealPriceDate").value;
+        const dateInputs = document.querySelectorAll(".row-date");
+        dateInputs.forEach(inp => {
+            if (!inp.value) inp.value = masterDate;
+        });
+    }
+
+    function loadSampleRecipe(key) {
+        const recipe = sampleRecipes[key] || sampleRecipes.chicken;
+        document.getElementById("itemNo").value = recipe.itemNo;
+        document.getElementById("mealName").value = recipe.name;
+        document.getElementById("portions").value = recipe.portions;
+        document.getElementById("portionSize").value = recipe.size;
+        document.getElementById("seasoning").value = recipe.seasoning;
+        document.getElementById("wastePct").value = recipe.waste;
+        document.getElementById("multiplier").value = recipe.mult;
+        onMultiplierChanged();
+
+        const tbody = document.getElementById("ingredientsBody");
+        tbody.innerHTML = "";
+        recipe.ingredients.forEach(item => {
+            addIngredientRow(item.name, item.date, item.qty, item.rUnit, item.pUnit, item.price);
+        });
+        calculateAll();
+    }
+
+    function addEmptyRow() {
+        const masterDate = document.getElementById("mealPriceDate").value || new Date().toISOString().split('T')[0];
+        addIngredientRow("خامة جديدة", masterDate, 100, "جرام (Gram)", "كيلوجرام (Kg)", 50);
+    }
+
+    function addIngredientRow(name, date, qty, rUnit, pUnit, price) {
+        const tbody = document.getElementById("ingredientsBody");
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td><input type="text" class="row-name" value="${name}"></td>
+            <td class="date-cell"><input type="date" class="row-date" value="${date}"></td>
+            <td><input type="number" class="row-qty" value="${qty}" min="0.01" step="any" oninput="calculateAll()"></td>
+            <td>
+                <select class="row-runit" onchange="calculateAll()">
+                    <option value="جرام (Gram)" ${rUnit.includes("جرام") ? "selected" : ""}>جرام (Gram)</option>
+                    <option value="كيلوجرام (Kg)" ${rUnit.includes("كيلوجرام") ? "selected" : ""}>كيلوجرام (Kg)</option>
+                    <option value="مليلتر (ml)" ${rUnit.includes("مليلتر") ? "selected" : ""}>مليلتر (ml)</option>
+                    <option value="لتر (L)" ${rUnit.includes("لتر") ? "selected" : ""}>لتر (L)</option>
+                    <option value="قطعة / حصة" ${rUnit.includes("قطعة") ? "selected" : ""}>قطعة / حصة</option>
+                </select>
+            </td>
+            <td>
+                <select class="row-punit" onchange="calculateAll()">
+                    <option value="كيلوجرام (Kg)" ${pUnit.includes("كيلوجرام") ? "selected" : ""}>كيلوجرام (Kg)</option>
+                    <option value="لتر (L)" ${pUnit.includes("لتر") ? "selected" : ""}>لتر (L)</option>
+                    <option value="قطعة / حصة" ${pUnit.includes("قطعة") ? "selected" : ""}>قطعة / حصة</option>
+                    <option value="جرام (Gram)" ${pUnit.includes("جرام") ? "selected" : ""}>جرام (Gram)</option>
+                    <option value="مليلتر (ml)" ${pUnit.includes("مليلتر") ? "selected" : ""}>مليلتر (ml)</option>
+                </select>
+            </td>
+            <td><input type="number" class="row-price" value="${price}" min="0" step="any" oninput="calculateAll()"></td>
+            <td class="cost-col row-cost">0.00 ج.م</td>
+            <td style="text-align: center;">
+                <button class="btn btn-danger-ghost" title="حذف هذا المكون" onclick="removeRow(this)">✕</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+        calculateAll();
+    }
+
+    function removeRow(btn) {
+        btn.closest("tr").remove();
+        calculateAll();
+    }
+
+    function computeConversion(rUnit, pUnit) {
+        if (rUnit.includes("جرام") && pUnit.includes("كيلوجرام")) return 1000;
+        if (rUnit.includes("مليلتر") && pUnit.includes("لتر")) return 1000;
+        if (rUnit.includes("كيلوجرام") && pUnit.includes("جرام")) return 0.001;
+        if (rUnit.includes("لتر") && pUnit.includes("مليلتر")) return 0.001;
+        return 1.0;
+    }
+
+    function calculateAll() {
+        const rows = document.querySelectorAll("#ingredientsBody tr");
+        let ingredientsSum = 0;
+        const itemCosts = [];
+
+        rows.forEach(tr => {
+            const name = tr.querySelector(".row-name").value;
+            const qty = parseFloat(tr.querySelector(".row-qty").value) || 0;
+            const rUnit = tr.querySelector(".row-runit").value;
+            const pUnit = tr.querySelector(".row-punit").value;
+            const price = parseFloat(tr.querySelector(".row-price").value) || 0;
+
+            const conv = computeConversion(rUnit, pUnit);
+            const cost = (qty / conv) * price;
+            ingredientsSum += cost;
+
+            itemCosts.push({ name, cost });
+            tr.querySelector(".row-cost").innerText = cost.toFixed(2) + " ج.م";
+        });
+
+        const seasoning = parseFloat(document.getElementById("seasoning").value) || 0;
+        const subtotal = ingredientsSum + seasoning;
+        const wastePct = (parseFloat(document.getElementById("wastePct").value) || 0) / 100;
+        const wasteVal = subtotal * wastePct;
+        const totalCost = subtotal + wasteVal;
+
+        const portions = Math.max(1, parseFloat(document.getElementById("portions").value) || 1);
+        const costPerPortion = totalCost / portions;
+
+        const multiplier = parseFloat(document.getElementById("multiplier").value) || 3.33;
+        const sellingPrice = costPerPortion * multiplier;
+        const grossProfit = sellingPrice - costPerPortion;
+        const profitMargin = sellingPrice > 0 ? (grossProfit / sellingPrice) * 100 : 0;
+
+        // Display KPI updates
+        document.getElementById("subtotalVal").innerText = subtotal.toFixed(2) + " ج.م";
+        document.getElementById("wasteVal").innerText = wasteVal.toFixed(2) + " ج.م";
+        document.getElementById("totalCostVal").innerText = totalCost.toFixed(2) + " ج.م";
+        document.getElementById("portionCostVal").innerText = costPerPortion.toFixed(2) + " ج.م";
+        document.getElementById("sellingPriceVal").innerText = sellingPrice.toFixed(2) + " ج.م";
+        document.getElementById("topSellingPrice").innerText = sellingPrice.toFixed(2) + " ج.م";
+        document.getElementById("grossProfitVal").innerText = grossProfit.toFixed(2) + " ج.م";
+        document.getElementById("grossMarginPct").innerText = `هامش الربح: ${profitMargin.toFixed(1)}%`;
+        document.getElementById("topProfitMargin").innerText = `هامش الربح الإجمالي: ${profitMargin.toFixed(1)}%`;
+
+        updateBreakdownBar(itemCosts, seasoning, wasteVal, totalCost);
+    }
+
+    function updateBreakdownBar(itemCosts, seasoning, wasteVal, totalCost) {
+        const bar = document.getElementById("breakdownBar");
+        const chips = document.getElementById("breakdownChips");
+        bar.innerHTML = "";
+        chips.innerHTML = "";
+
+        if (totalCost <= 0) {
+            document.getElementById("breakdownStatus").innerText = "لا توجد تكاليف مدخلة";
+            return;
+        }
+
+        document.getElementById("breakdownStatus").innerText = `إجمالي ${itemCosts.length} مكونات + بهارات + هالك 5%`;
+
+        const allSegments = [...itemCosts];
+        if (seasoning > 0) allSegments.push({ name: "البهارات والتوابل", cost: seasoning });
+        if (wasteVal > 0) allSegments.push({ name: "الهالك والفاقد (5%)", cost: wasteVal });
+
+        allSegments.forEach((seg, idx) => {
+            const pct = (seg.cost / totalCost) * 100;
+            if (pct <= 0) return;
+
+            const color = colors[idx % colors.length];
+
+            // Progress segment
+            const div = document.createElement("div");
+            div.className = "breakdown-segment";
+            div.style.width = pct + "%";
+            div.style.backgroundColor = color;
+            div.title = `${seg.name}: ${pct.toFixed(1)}% (${seg.cost.toFixed(2)} ج.م)`;
+            bar.appendChild(div);
+
+            // Legend chip
+            const chip = document.createElement("div");
+            chip.className = "breakdown-chip";
+            chip.innerHTML = `
+                <span class="chip-dot" style="background:${color}"></span>
+                <span>${seg.name}: <b>${pct.toFixed(1)}%</b></span>
+            `;
+            chips.appendChild(chip);
+        });
+    }
+
+    function onMultiplierChanged() {
+        const mult = parseFloat(document.getElementById("multiplier").value) || 1;
+        if (mult > 0) {
+            document.getElementById("foodCostPct").value = ((1 / mult) * 100).toFixed(1);
+        }
+        calculateAll();
+    }
+
+    function onFoodCostChanged() {
+        const pct = parseFloat(document.getElementById("foodCostPct").value) || 1;
+        if (pct > 0) {
+            document.getElementById("multiplier").value = (100 / pct).toFixed(2);
+        }
+        calculateAll();
+    }
+
+    function saveToLocalStorage() {
+        const mealData = {
+            itemNo: document.getElementById("itemNo").value,
+            mealName: document.getElementById("mealName").value,
+            priceDate: document.getElementById("mealPriceDate").value,
+            portions: document.getElementById("portions").value,
+            portionSize: document.getElementById("portionSize").value,
+            seasoning: document.getElementById("seasoning").value,
+            wastePct: document.getElementById("wastePct").value,
+            multiplier: document.getElementById("multiplier").value,
+            foodCostPct: document.getElementById("foodCostPct").value,
+            rows: []
+        };
+        document.querySelectorAll("#ingredientsBody tr").forEach(tr => {
+            mealData.rows.push({
+                name: tr.querySelector(".row-name").value,
+                date: tr.querySelector(".row-date").value,
+                qty: tr.querySelector(".row-qty").value,
+                rUnit: tr.querySelector(".row-runit").value,
+                pUnit: tr.querySelector(".row-punit").value,
+                price: tr.querySelector(".row-price").value
+            });
+        });
+        localStorage.setItem("blue_healing_saved_meal", JSON.stringify(mealData));
+        alert("✅ تم حفظ الوجبة بنجاح في ذاكرة المتصفح للرجوع إليها لاحقاً!");
+    }
+
+    function exportToExcel() {
+        if (typeof XLSX === 'undefined') {
+            alert("خطأ: تعذر تحميل أداة التصدير. يمكنك استخدام تطبيق سطح المكتب المرفق!");
+            return;
+        }
+
+        const wb = XLSX.utils.book_new();
+        const ws_data = [];
+
+        // Branding Banner
+        ws_data.push(["✦ BLUE HEALING ✦ | CULINARY OPERATIONS & MENU ENGINEERING"]);
+        ws_data.push(["كارت تكلفة الوصفة المعيارية - STANDARD RECIPE COST CARD"]);
+        ws_data.push([]); // blank
+
+        const itemNo = document.getElementById("itemNo").value;
+        const mealName = document.getElementById("mealName").value;
+        const mealDate = document.getElementById("mealPriceDate").value;
+        const portions = document.getElementById("portions").value;
+        const portionSize = document.getElementById("portionSize").value;
+        const seasoning = parseFloat(document.getElementById("seasoning").value) || 0;
+        const wastePct = parseFloat(document.getElementById("wastePct").value) || 5;
+        const mult = parseFloat(document.getElementById("multiplier").value) || 3.33;
+        const fcPct = parseFloat(document.getElementById("foodCostPct").value) || 30;
+
+        ws_data.push(["1. Item No. (رقم الصنف):", itemNo]);
+        ws_data.push(["Meal Name (اسم الوجبة):", mealName]);
+        ws_data.push(["تاريخ تسعير الخامات (Price Date):", mealDate]);
+        ws_data.push(["2. No. of Portions (عدد الوجبات):", portions]);
+        ws_data.push(["3. Size of Portion (حجم الحصة):", portionSize]);
+        ws_data.push(["4. Cost / Portion (تكلفة الوجبة الواحدة):", document.getElementById("portionCostVal").innerText]);
+        ws_data.push(["5. Food Cost % (نسبة تكلفة الطعام):", fcPct + " %"]);
+        ws_data.push(["Pricing Multiplier (مُعامل الضرب):", mult]);
+        ws_data.push(["6. Selling Price / Portion (سعر البيع المقترح):", document.getElementById("sellingPriceVal").innerText]);
+        ws_data.push(["فريق العمل المعتمد (Team):", "Blue Healing"]);
+        ws_data.push([]); // blank
+
+        // Header Table
+        ws_data.push([
+            "Ingredients (المكونات)",
+            "Price Date (تاريخ السعر)",
+            "Recipe Qty (الكمية)",
+            "Recipe Unit (الوحدة)",
+            "Purchase Unit (وحدة الشراء)",
+            "Price / Unit (سعر الشراء ج.م)",
+            "Cost L.E (التكلفة بالجنيه)"
+        ]);
+
+        const rows = document.querySelectorAll("#ingredientsBody tr");
+        rows.forEach(tr => {
+            const name = tr.querySelector(".row-name").value;
+            const date = tr.querySelector(".row-date").value;
+            const qty = parseFloat(tr.querySelector(".row-qty").value) || 0;
+            const rUnit = tr.querySelector(".row-runit").value;
+            const pUnit = tr.querySelector(".row-punit").value;
+            const price = parseFloat(tr.querySelector(".row-price").value) || 0;
+            const cost = tr.querySelector(".row-cost").innerText;
+
+            ws_data.push([name, date, qty, rUnit, pUnit, price, cost]);
+        });
+
+        // Summary Rows
+        ws_data.push(["Seasoning (البهارات والتوابل)", "", "", "", "", "", seasoning.toFixed(2) + " ج.م"]);
+        ws_data.push(["Sub-total (المجموع الفرعي)", "", "", "", "", "", document.getElementById("subtotalVal").innerText]);
+        ws_data.push([`${wastePct}% Waste (نسبة الهالك والفاقد)`, "", "", "", "", "", document.getElementById("wasteVal").innerText]);
+        ws_data.push(["Total Cost (التكلفة الإجمالية للوصفة)", "", "", "", "", "", document.getElementById("totalCostVal").innerText]);
+
+        const ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+        // Column widths
+        ws['!cols'] = [
+            { wch: 36 },
+            { wch: 16 },
+            { wch: 14 },
+            { wch: 15 },
+            { wch: 15 },
+            { wch: 18 },
+            { wch: 22 }
+        ];
+
+        XLSX.utils.book_append_sheet(wb, ws, "Blue Healing Cost Card");
+        const safeName = mealName.replace(/[\\/:*?"<>|]/g, "_");
+        XLSX.writeFile(wb, `Blue_Healing_Cost_${safeName || "Recipe"}.xlsx`);
+    }
+
+    // Auto initialize on load
+    window.onload = function() {
+        setInitialDate();
+        loadSampleRecipe('chicken');
+    };
+</script>
+
+</body>
+</html>

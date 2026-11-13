@@ -1,0 +1,4 @@
+# Ignore unrelated lecture and PDF files
+*.pdf
+__pycache__/
+*.pyc
