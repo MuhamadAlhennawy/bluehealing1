@@ -161,6 +161,9 @@
         .btn-danger { background: var(--danger); color: white; }
         .btn-danger:hover { background: #DC2626; }
 
+        .btn-purple { background: var(--purple); color: white; }
+        .btn-purple:hover { background: #6D28D9; }
+
         .btn-sm { padding: 5px 10px; font-size: 12px; }
 
         /* VIEW 1: CUSTOMER DIGITAL MENU */
@@ -311,7 +314,7 @@
             color: #059669;
         }
 
-        /* VIEW 2: MANAGER WORKSPACE (Hidden by default until login) */
+        /* VIEW 2: MANAGER WORKSPACE */
         #managerSection {
             display: none;
         }
@@ -669,7 +672,7 @@
         .modal-content {
             background: white;
             width: 100%;
-            max-width: 600px;
+            max-width: 620px;
             max-height: 90vh;
             border-radius: var(--radius-lg);
             box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
@@ -704,38 +707,6 @@
             gap: 8px;
         }
 
-        /* Pantry List in Modal */
-        .library-search-box {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .library-search-box input {
-            flex-grow: 1;
-            padding: 8px 12px;
-            border: 1px solid #CBD5E1;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-        }
-
-        .library-list-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        .library-list-table th {
-            background: #F1F5F9;
-            padding: 8px;
-            text-align: right;
-            border-bottom: 2px solid var(--border);
-            font-size: 12px;
-        }
-        .library-list-table td {
-            padding: 8px;
-            border-bottom: 1px solid #F1F5F9;
-        }
-        .library-list-table tr:hover { background: #EFF6FF; }
-
         /* Login Modal Specific */
         .login-box {
             display: flex;
@@ -752,6 +723,35 @@
             font-size: 12px;
             color: #1E40AF;
             line-height: 1.5;
+        }
+
+        /* Admin Management Table */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+        .admin-table th {
+            background: #F1F5F9;
+            padding: 8px 10px;
+            text-align: right;
+            border-bottom: 2px solid var(--border);
+            font-size: 12px;
+        }
+        .admin-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #F1F5F9;
+            vertical-align: middle;
+        }
+        .admin-table tr:hover { background: #F8FAFC; }
+
+        .add-admin-form-box {
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-top: 10px;
         }
 
         /* Mobile specific adjustments */
@@ -824,10 +824,11 @@
         <!-- Manager Status Banner -->
         <div class="manager-control-bar">
             <div class="manager-info">
-                <span>🔐 لوحة تحكم الإدارة والشيف:</span>
-                <span style="color: #1E3A8A;" id="loggedManagerName">Admin (Blue Healing)</span>
+                <span>🔐 لوحة تحكم الإدارة:</span>
+                <span style="color: #1E3A8A;" id="loggedManagerName">المدير العام (Admin)</span>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-purple btn-sm" onclick="openAdminManagementModal()">👥 إدارة المدراء والرموز السرية</button>
                 <button class="btn btn-outline btn-sm" onclick="showCustomerView()">👁️ معاينة منيو العملاء</button>
                 <button class="btn btn-outline btn-sm" onclick="openPantryModal()">📦 مكتبة الخامات والأسعار</button>
                 <button class="btn btn-primary btn-sm" onclick="triggerExcelUpload()">📥 رفع خامات من Excel</button>
@@ -1026,13 +1027,13 @@
                     <input type="text" id="loginUsername" placeholder="مثال: admin" autocomplete="username">
                 </div>
                 <div class="form-control">
-                    <label>كلمة المرور (Password):</label>
+                    <label>الرمز السري / كلمة المرور (Passcode):</label>
                     <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeypress="if(event.key==='Enter') executeLogin()">
                 </div>
                 <div class="default-creds-hint">
-                    💡 <b>بيانات الدخول الافتراضية للإدارة:</b><br>
+                    💡 <b>بيانات الدخول الافتراضية لأول مرة:</b><br>
                     • اسم المستخدم: <code style="font-weight: bold; background: white; padding: 1px 4px; border-radius: 3px;">admin</code><br>
-                    • كلمة المرور: <code style="font-weight: bold; background: white; padding: 1px 4px; border-radius: 3px;">bluehealing123</code>
+                    • الرمز السري: <code style="font-weight: bold; background: white; padding: 1px 4px; border-radius: 3px;">bluehealing123</code>
                 </div>
             </div>
         </div>
@@ -1043,7 +1044,68 @@
     </div>
 </div>
 
-<!-- Modal 2: Master Pantry Library -->
+<!-- Modal 2: Admin & Passcode Management -->
+<div class="modal-overlay" id="adminManagementModal">
+    <div class="modal-content" style="max-width: 650px;">
+        <div class="modal-header">
+            <span>👥 إدارة حسابات المدراء والرموز السرية (Admins & Passcodes)</span>
+            <span style="cursor: pointer; font-size: 18px;" onclick="closeAdminManagementModal()">✕</span>
+        </div>
+        <div class="modal-body">
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                يمكنك من هنا إضافة مدراء وشيفات جدد، تعديل الرموز السرية (Passcodes)، أو تغيير أسماء المستخدمين. تحفظ التعديلات فوراً!
+            </p>
+
+            <!-- Admins Table -->
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم / الصفة</th>
+                            <th>اسم المستخدم</th>
+                            <th>الرمز السري (Passcode)</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminsTableBody">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Add / Edit Admin Form -->
+            <div class="add-admin-form-box">
+                <h4 style="font-size: 13px; font-weight: 800; color: #1E293B; margin-bottom: 10px;" id="adminFormTitle">
+                    ➕ إضافة مدير / مستخدم جديد
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 10px;">
+                    <div class="form-control">
+                        <label>الاسم أو الصفة (Full Name / Role):</label>
+                        <input type="text" id="newAdminName" placeholder="مثال: الشيف التنفيذي">
+                    </div>
+                    <div class="form-control">
+                        <label>اسم المستخدم (Username):</label>
+                        <input type="text" id="newAdminUsername" placeholder="مثال: chef_ali">
+                    </div>
+                    <div class="form-control">
+                        <label>الرمز السري (Passcode):</label>
+                        <input type="text" id="newAdminPasscode" placeholder="مثال: pass1234">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button class="btn btn-secondary btn-sm" id="btnCancelEditAdmin" style="display: none;" onclick="cancelEditAdmin()">إلغاء التعديل</button>
+                    <button class="btn btn-purple btn-sm" id="btnSaveAdmin" onclick="saveAdminFromForm()">حفظ المدير 💾</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" onclick="closeAdminManagementModal()">تم وإغلاق</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 3: Master Pantry Library -->
 <div class="modal-overlay" id="pantryModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -1088,7 +1150,6 @@
         "#EC4899", "#14B8A6", "#64748B", "#F97316", "#84CC16"
     ];
 
-    // Default Master Pantry
     const defaultPantry = [
         { name: "صدور دجاج مخلي (Chicken Breast)", cat: "دواجن ولحوم", unit: "كيلوجرام (Kg)", price: 220 },
         { name: "أوراك دجاج مخلية (Chicken Thighs)", cat: "دواجن ولحوم", unit: "كيلوجرام (Kg)", price: 190 },
@@ -1129,8 +1190,11 @@
     // Global State
     let appState = {
         isManagerLoggedIn: false,
-        managerCreds: { username: "admin", password: "bluehealing123" },
-        currentView: "customer", // "customer" or "manager"
+        currentLoggedInAdmin: null,
+        adminsList: [
+            { id: "adm_1", name: "المدير العام", username: "admin", passcode: "bluehealing123" }
+        ],
+        currentView: "customer",
         activeTab: "meal_0",
         pantry: [],
         meals: [
@@ -1192,7 +1256,9 @@
         ]
     };
 
-    // Load / Save State
+    let editingAdminId = null;
+
+    // Load & Save State
     function initStorage() {
         const savedState = localStorage.getItem("blue_healing_multi_meals");
         if (savedState) {
@@ -1205,6 +1271,16 @@
             } catch(e) { console.error(e); }
         }
 
+        const savedAdmins = localStorage.getItem("blue_healing_admins");
+        if (savedAdmins) {
+            try {
+                const parsed = JSON.parse(savedAdmins);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    appState.adminsList = parsed;
+                }
+            } catch(e) { console.error(e); }
+        }
+
         const savedPantry = localStorage.getItem("blue_healing_pantry");
         if (savedPantry) {
             try { appState.pantry = JSON.parse(savedPantry); } catch(e) { appState.pantry = [...defaultPantry]; }
@@ -1212,10 +1288,11 @@
             appState.pantry = [...defaultPantry];
         }
 
-        // Check if manager session is stored
         const sessionActive = sessionStorage.getItem("blue_healing_manager_logged");
+        const sessionAdmin = sessionStorage.getItem("blue_healing_current_admin");
         if (sessionActive === "true") {
             appState.isManagerLoggedIn = true;
+            appState.currentLoggedInAdmin = sessionAdmin ? JSON.parse(sessionAdmin) : appState.adminsList[0];
             appState.currentView = "manager";
         }
     }
@@ -1226,6 +1303,7 @@
             meals: appState.meals
         }));
         localStorage.setItem("blue_healing_pantry", JSON.stringify(appState.pantry));
+        localStorage.setItem("blue_healing_admins", JSON.stringify(appState.adminsList));
     }
 
     // Role / View Switching
@@ -1241,6 +1319,9 @@
             mgrSec.style.display = "block";
             roleBadge.className = "role-badge role-manager";
             roleBadge.innerText = "لوحة الإدارة والشيف";
+
+            const adminName = appState.currentLoggedInAdmin ? appState.currentLoggedInAdmin.name : "المدير العام";
+            document.getElementById("loggedManagerName").innerText = adminName;
 
             navActions.innerHTML = `
                 <button class="btn btn-outline" style="color:white; border-color:rgba(255,255,255,0.3);" onclick="showCustomerView()">
@@ -1278,7 +1359,7 @@
         }
     }
 
-    // Manager Login / Logout
+    // Manager Login & Passcode Auth
     function openLoginModal() {
         document.getElementById("loginUsername").value = "";
         document.getElementById("loginPassword").value = "";
@@ -1291,24 +1372,161 @@
     }
 
     function executeLogin() {
-        const u = document.getElementById("loginUsername").value.trim();
+        const u = document.getElementById("loginUsername").value.trim().toLowerCase();
         const p = document.getElementById("loginPassword").value.trim();
 
-        if (u === appState.managerCreds.username && p === appState.managerCreds.password) {
+        const matchedAdmin = appState.adminsList.find(a => 
+            a.username.toLowerCase() === u && a.passcode === p
+        );
+
+        if (matchedAdmin) {
             appState.isManagerLoggedIn = true;
+            appState.currentLoggedInAdmin = matchedAdmin;
             sessionStorage.setItem("blue_healing_manager_logged", "true");
+            sessionStorage.setItem("blue_healing_current_admin", JSON.stringify(matchedAdmin));
             closeLoginModal();
             setView("manager");
         } else {
-            alert("❌ خطأ: اسم المستخدم أو كلمة المرور غير صحيحة!\n\nاسم المستخدم الافتراضي: admin\nكلمة المرور الافتراضية: bluehealing123");
+            alert("❌ خطأ: اسم المستخدم أو الرمز السري غير صحيح!\nيرجى التأكد من كتابة البيانات بدقة.");
         }
     }
 
     function managerLogout() {
         if (confirm("هل ترغب في تسجيل الخروج من لوحة الإدارة؟")) {
             appState.isManagerLoggedIn = false;
+            appState.currentLoggedInAdmin = null;
             sessionStorage.removeItem("blue_healing_manager_logged");
+            sessionStorage.removeItem("blue_healing_current_admin");
             setView("customer");
+        }
+    }
+
+    // ==========================================
+    // ADMINS & PASSCODES MANAGEMENT MODAL
+    // ==========================================
+    function openAdminManagementModal() {
+        cancelEditAdmin();
+        renderAdminsTable();
+        document.getElementById("adminManagementModal").classList.add("active");
+    }
+
+    function closeAdminManagementModal() {
+        document.getElementById("adminManagementModal").classList.remove("active");
+    }
+
+    function renderAdminsTable() {
+        const tbody = document.getElementById("adminsTableBody");
+        tbody.innerHTML = "";
+
+        appState.adminsList.forEach(admin => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><b>${admin.name}</b></td>
+                <td><code style="background:#EFF6FF; color:#1E40AF; padding:2px 6px; border-radius:4px; font-weight:bold;">${admin.username}</code></td>
+                <td>
+                    <span style="font-family:monospace; letter-spacing:1px; background:#FEF3C7; color:#92400E; padding:2px 6px; border-radius:4px; font-weight:bold;">
+                        ${admin.passcode}
+                    </span>
+                </td>
+                <td>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn btn-outline btn-sm" onclick="startEditAdmin('${admin.id}')">✏️ تعديل</button>
+                        ${appState.adminsList.length > 1 ? 
+                            `<button class="btn btn-outline btn-sm" style="color:#EF4444; border-color:#FCA5A5;" onclick="deleteAdmin('${admin.id}')">🗑️</button>` : 
+                            ''
+                        }
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function startEditAdmin(adminId) {
+        const admin = appState.adminsList.find(a => a.id === adminId);
+        if (!admin) return;
+
+        editingAdminId = adminId;
+        document.getElementById("adminFormTitle").innerText = `✏️ تعديل بيانات: ${admin.name}`;
+        document.getElementById("newAdminName").value = admin.name;
+        document.getElementById("newAdminUsername").value = admin.username;
+        document.getElementById("newAdminPasscode").value = admin.passcode;
+        document.getElementById("btnCancelEditAdmin").style.display = "inline-flex";
+        document.getElementById("btnSaveAdmin").innerText = "تحديث البيانات 💾";
+        document.getElementById("newAdminName").focus();
+    }
+
+    function cancelEditAdmin() {
+        editingAdminId = null;
+        document.getElementById("adminFormTitle").innerText = "➕ إضافة مدير / مستخدم جديد";
+        document.getElementById("newAdminName").value = "";
+        document.getElementById("newAdminUsername").value = "";
+        document.getElementById("newAdminPasscode").value = "";
+        document.getElementById("btnCancelEditAdmin").style.display = "none";
+        document.getElementById("btnSaveAdmin").innerText = "حفظ المدير 💾";
+    }
+
+    function saveAdminFromForm() {
+        const name = document.getElementById("newAdminName").value.trim();
+        const username = document.getElementById("newAdminUsername").value.trim().toLowerCase();
+        const passcode = document.getElementById("newAdminPasscode").value.trim();
+
+        if (!name || !username || !passcode) {
+            alert("يرجى ملء جميع الحقول: الاسم، اسم المستخدم، والرمز السري!");
+            return;
+        }
+
+        if (passcode.length < 4) {
+            alert("الرمز السري يجب أن يكون 4 أحرف أو أرقام على الأقل!");
+            return;
+        }
+
+        // Check if username already exists for another admin
+        const duplicate = appState.adminsList.find(a => a.username.toLowerCase() === username && a.id !== editingAdminId);
+        if (duplicate) {
+            alert("اسم المستخدم هذا مسجل بالفعل لمدير آخر! اختر اسم مستخدم مختلف.");
+            return;
+        }
+
+        if (editingAdminId) {
+            // Edit existing
+            const admin = appState.adminsList.find(a => a.id === editingAdminId);
+            if (admin) {
+                admin.name = name;
+                admin.username = username;
+                admin.passcode = passcode;
+                alert(`✅ تم تحديث بيانات المدير (${name}) بنجاح!`);
+            }
+        } else {
+            // Add new
+            const newAdmin = {
+                id: "adm_" + Date.now(),
+                name: name,
+                username: username,
+                passcode: passcode
+            };
+            appState.adminsList.push(newAdmin);
+            alert(`✅ تم إضافة المدير الجديد (${name}) بنجاح!`);
+        }
+
+        saveState();
+        cancelEditAdmin();
+        renderAdminsTable();
+    }
+
+    function deleteAdmin(adminId) {
+        if (appState.adminsList.length <= 1) {
+            alert("لا يمكن حذف هذا الحساب لأنه الحساب الإداري الوحيد المتبقي!");
+            return;
+        }
+
+        const admin = appState.adminsList.find(a => a.id === adminId);
+        if (!admin) return;
+
+        if (confirm(`هل أنت متأكد من حذف حساب (${admin.name})؟ لن يتمكن من تسجيل الدخول بعد الآن.`)) {
+            appState.adminsList = appState.adminsList.filter(a => a.id !== adminId);
+            saveState();
+            renderAdminsTable();
         }
     }
 
@@ -1379,7 +1597,6 @@
             const card = document.createElement("div");
             card.className = "dish-card";
 
-            // Build clean ingredient highlight list without revealing wholesale prices
             const ingHighlights = (meal.ingredients || []).map(i => {
                 let clean = i.name.split('(')[0].trim();
                 return clean;
@@ -1429,7 +1646,7 @@
     }
 
     // ==========================================
-    // MANAGER RECIPE EDITOR CODE
+    // MANAGER RECIPE EDITOR
     // ==========================================
     function getActiveMeal() {
         return appState.meals.find(m => m.id === appState.activeTab) || appState.meals[0];
