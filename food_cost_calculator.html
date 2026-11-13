@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Blue Healing • نظام تسعير وتكلفة الوجبات المتعددة</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <!-- SheetJS for Excel import/export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --brand-dark: #0B132B;
+            --brand-primary: #1C2541;
+            --brand-blue: #2563EB;
+            --brand-cyan: #06B6D4;
+            --brand-accent: #3B82F6;
+            --success: #059669;
+            --success-light: #ECFDF5;
+            --amber: #D97706;
+            --amber-light: #FEF3C7;
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+            --purple: #7C3AED;
+            --purple-light: #F3E8FF;
+            --bg-page: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --border: #E2E8F0;
+            --border-focus: #3B82F6;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Top Brand Bar */
+        .top-navbar {
+            background: linear-gradient(135deg, #0B132B 0%, #1C2541 60%, #1E3A8A 100%);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 14px 20px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo-badge {
+            background: linear-gradient(135deg, #06B6D4, #2563EB);
+            color: white;
+            font-weight: 900;
+            font-size: 16px;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.4);
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: #94A3B8;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary { background: var(--brand-blue); color: white; }
+        .btn-primary:hover { background: #1D4ED8; }
+
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #047857; }
+
+        .btn-secondary { background: #E2E8F0; color: #334155; }
+        .btn-secondary:hover { background: #CBD5E1; }
+
+        .btn-outline { background: transparent; border: 1.5px solid #CBD5E1; color: #334155; }
+        .btn-outline:hover { background: #F1F5F9; }
+
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #DC2626; }
+
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+        /* Meal Tabs Navigation */
+        .meals-tab-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            scrollbar-width: thin;
+        }
+
+        .meals-tab-bar::-webkit-scrollbar { height: 4px; }
+        .meals-tab-bar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+        .meal-tab {
+            background: white;
+            border: 1.5px solid var(--border);
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .meal-tab.active {
+            background: var(--brand-primary);
+            color: white;
+            border-color: var(--brand-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .meal-tab .close-tab {
+            font-size: 11px;
+            background: rgba(0,0,0,0.1);
+            color: inherit;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .meal-tab.active .close-tab { background: rgba(255,255,255,0.2); }
+
+        .btn-add-meal {
+            background: #EFF6FF;
+            color: var(--brand-blue);
+            border: 1.5px dashed #93C5FD;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .btn-add-meal:hover { background: #DBEAFE; }
+
+        .tab-menu-summary {
+            background: #F3E8FF;
+            color: #6B21A8;
+            border: 1.5px solid #C084FC;
+            font-weight: 800;
+        }
+        .tab-menu-summary.active {
+            background: #6B21A8;
+            color: white;
+            border-color: #6B21A8;
+        }
+
+        /* Main Workspace Card */
+        .workspace-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 14px;
+        }
+
+        /* Responsive Grid for Meal Info */
+        .meal-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            background: #F8FAFC;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .form-control {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-control label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .form-control input, .form-control select {
+            padding: 8px 10px;
+            border: 1px solid #CBD5E1;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            background: white;
+            font-weight: 600;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .form-control input:focus, .form-control select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Action bar above table */
+        .table-tools-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-tools-left, .table-tools-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Table Styles & Mobile Scroll */
+        .table-responsive {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: white;
+            margin-bottom: 14px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table.recipe-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: right;
+            min-width: 650px;
+        }
+
+        table.recipe-table thead th {
+            background: #1E293B;
+            color: white;
+            padding: 9px 10px;
+            font-weight: 700;
+            font-size: 12px;
+            text-align: center;
+            border-left: 1px solid #334155;
+            white-space: nowrap;
+        }
+
+        table.recipe-table tbody td {
+            padding: 7px 8px;
+            border-bottom: 1px solid #F1F5F9;
+            border-left: 1px solid #F1F5F9;
+            vertical-align: middle;
+        }
+
+        table.recipe-table tbody tr:hover { background-color: #F8FAFC; }
+
+        table.recipe-table input, table.recipe-table select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #CBD5E1;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+        }
+
+        .cost-badge {
+            background: #ECFDF5;
+            color: #065F46;
+            font-weight: 800;
+            text-align: center;
+            padding: 4px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* Visual Breakdown Bar */
+        .breakdown-wrapper {
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #E2E8F0;
+            border-radius: 9999px;
+            overflow: hidden;
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .progress-seg {
+            height: 100%;
+            transition: width 0.2s;
+        }
+
+        .legend-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        .legend-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: white;
+            border: 1px solid #E2E8F0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* KPI Cards Grid */
+        .kpi-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            text-align: center;
+        }
+
+        .kpi-card .kpi-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+            margin-bottom: 4px;
+        }
+
+        .kpi-card .kpi-num {
+            font-size: 18px;
+            font-weight: 900;
+            color: #0F172A;
+        }
+
+        .kpi-card .kpi-sub {
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 2px;
+        }
+
+        .kpi-card.highlight-green {
+            background: #ECFDF5;
+            border: 1.5px solid #059669;
+        }
+        .kpi-card.highlight-green .kpi-num { color: #065F46; font-size: 20px; }
+
+        .kpi-card.highlight-purple {
+            background: #FAF5FF;
+            border: 1.5px solid #A855F7;
+        }
+        .kpi-card.highlight-purple .kpi-num { color: #6B21A8; }
+
+        .kpi-card.highlight-amber {
+            background: #FEF3C7;
+            border: 1px solid #F59E0B;
+        }
+        .kpi-card.highlight-amber .kpi-num { color: #B45309; }
+
+        /* Bottom Export & Save Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Modal Dialog */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 14px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            background: #1E293B;
+            color: white;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        .modal-body {
+            padding: 16px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .modal-footer {
+            padding: 12px 18px;
+            background: #F8FAFC;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* Master Library Table in Modal */
+        .library-search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .library-search-box input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #CBD5E1;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+        }
+
+        .library-list-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .library-list-table th {
+            background: #F1F5F9;
+            padding: 8px;
+            text-align: right;
+            border-bottom: 2px solid var(--border);
+            font-size: 12px;
+        }
+
+        .library-list-table td {
+            padding: 8px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .library-list-table tr:hover { background: #EFF6FF; }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 640px) {
+            body { padding: 6px; }
+            .workspace-card { padding: 12px; }
+            .top-navbar { padding: 10px 14px; }
+            .brand-text h1 { font-size: 16px; }
+            .meal-info-grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
+            .kpi-summary-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+            .kpi-card { padding: 8px; }
+            .kpi-card .kpi-num { font-size: 16px; }
+            .kpi-card.highlight-green .kpi-num { font-size: 17px; }
+            .bottom-bar { flex-direction: column; align-items: stretch; }
+            .bottom-bar .btn { width: 100%; }
+        }
+
+        /* Hidden file input for Excel upload */
+        #excelFileInput { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Top Navbar with Branding -->
+    <div class="top-navbar">
+        <div class="brand-title">
+            <div class="brand-logo-badge">BH</div>
+            <div class="brand-text">
+                <h1>Blue Healing ✦ نظام تسعير الوجبات</h1>
+                <p>إدارة تكلفة الوصفات المعيارية وحساب سعر البيع للمنيو الكامل</p>
+            </div>
+        </div>
+
+        <div class="top-actions">
+            <button class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);" onclick="openPantryModal()">
+                📦 مكتبة الخامات والأسعار
+            </button>
+            <button class="btn btn-primary" onclick="triggerExcelUpload()">
+                📥 رفع مكونات من Excel
+            </button>
+            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)">
+        </div>
+    </div>
+
+    <!-- Multi-Meal Tabs Bar -->
+    <div class="meals-tab-bar" id="mealsTabBar">
+        <!-- Rendered dynamically -->
+    </div>
+
+    <!-- Active Meal Workspace Card -->
+    <div class="workspace-card" id="mealWorkspace">
+        
+        <!-- Meal Info Grid -->
+        <div class="meal-info-grid">
+            <div class="form-control">
+                <label>رقم / كود الصنف (Item No):</label>
+                <input type="text" id="mItemNo" oninput="updateActiveMealField('itemNo', this.value)">
+            </div>
+            <div class="form-control" style="grid-column: span 2;">
+                <label>اسم الوجبة المعيارية (Recipe Name):</label>
+                <input type="text" id="mName" oninput="updateActiveMealField('name', this.value)">
+            </div>
+            <div class="form-control">
+                <label>تاريخ تسعير الخامات (Price Date):</label>
+                <input type="date" id="mPriceDate" onchange="updateActiveMealField('priceDate', this.value)">
+            </div>
+            <div class="form-control">
+                <label>عدد الوجبات / الحصص (Portions):</label>
+                <input type="number" id="mPortions" min="1" oninput="updateActiveMealField('portions', parseFloat(this.value)||1)">
+            </div>
+            <div class="form-control">
+                <label>حجم الحصة للفرد (Portion Size):</label>
+                <input type="text" id="mPortionSize" oninput="updateActiveMealField('portionSize', this.value)">
+            </div>
+            <div class="form-control">
+                <label>تكلفة التوابل والبهارات (Seasoning ج.م):</label>
+                <input type="number" id="mSeasoning" min="0" step="0.5" oninput="updateActiveMealField('seasoning', parseFloat(this.value)||0)">
+            </div>
+            <div class="form-control">
+                <label>نسبة الهالك والفاقد (5% Waste):</label>
+                <input type="number" id="mWastePct" min="0" max="50" oninput="updateActiveMealField('wastePct', parseFloat(this.value)||0)">
+            </div>
+            <div class="form-control">
+                <label>معامل الضرب (Multiplier 3.1 - 3.6):</label>
+                <input type="number" id="mMultiplier" step="0.05" oninput="onMultiplierChanged(this.value)">
+            </div>
+            <div class="form-control">
+                <label>نسبة تكلفة الطعام (Food Cost %):</label>
+                <input type="number" id="mFoodCostPct" step="0.5" oninput="onFoodCostChanged(this.value)">
+            </div>
+        </div>
+
+        <!-- Table Toolbar -->
+        <div class="table-tools-bar">
+            <div class="table-tools-left">
+                <button class="btn btn-primary btn-sm" onclick="addNewIngredientRow()">➕ إضافة خامة</button>
+                <button class="btn btn-secondary btn-sm" onclick="openQuickAddPantry()">🥗 اختيار من مكتبة الخامات</button>
+                <button class="btn btn-outline btn-sm" onclick="downloadBlankExcelTemplate()">📄 تحميل نموذج إكسيل للاستيراد</button>
+            </div>
+            <div class="table-tools-right">
+                <button class="btn btn-outline btn-sm" onclick="duplicateCurrentMeal()">📋 نسخ هذه الوجبة</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteCurrentMeal()">🗑️ حذف الوجبة</button>
+            </div>
+        </div>
+
+        <!-- Ingredients Table (Responsive) -->
+        <div class="table-responsive">
+            <table class="recipe-table" id="ingredientsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Ingredients (المكونات)</th>
+                        <th style="width: 14%;">Price Date (تاريخ السعر)</th>
+                        <th style="width: 12%;">Qty (الكمية)</th>
+                        <th style="width: 13%;">Recipe Unit (الوحدة)</th>
+                        <th style="width: 13%;">Purchase Unit (وحدة الشراء)</th>
+                        <th style="width: 13%;">Price (سعر الشراء ج.م)</th>
+                        <th style="width: 12%;">Cost L.E (التكلفة)</th>
+                        <th style="width: 35px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="ingredientsBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cost Breakdown Bar -->
+        <div class="breakdown-wrapper">
+            <div class="breakdown-header">
+                <span>📊 التوزيع النسبي لتكلفة الخامات والبهارات والهالك</span>
+                <span id="breakdownTotalLabel">--</span>
+            </div>
+            <div class="progress-bar-container" id="progressBar"></div>
+            <div class="legend-chips" id="progressLegend"></div>
+        </div>
+
+        <!-- Financial KPI Cards -->
+        <div class="kpi-summary-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">المجموع الفرعي (Sub-total)</div>
+                <div class="kpi-num" id="kpiSubtotal">0.00 ج.م</div>
+                <div class="kpi-sub">الخامات + التوابل</div>
+            </div>
+            <div class="kpi-card highlight-amber">
+                <div class="kpi-title">الهالك (5% Waste)</div>
+                <div class="kpi-num" id="kpiWaste">0.00 ج.م</div>
+                <div class="kpi-sub">فاقد التقشير والطهي</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">إجمالي تكلفة الطبخة (Total Cost)</div>
+                <div class="kpi-num" id="kpiTotal">0.00 ج.م</div>
+                <div class="kpi-sub">المجموع الفرعي + الهالك</div>
+            </div>
+            <div class="kpi-card highlight-purple">
+                <div class="kpi-title">4. تكلفة الحصة الواحدة (Cost/Portion)</div>
+                <div class="kpi-num" id="kpiPortionCost">0.00 ج.م</div>
+                <div class="kpi-sub">التكلفة ÷ عدد الحصص</div>
+            </div>
+            <div class="kpi-card highlight-green">
+                <div class="kpi-title">6. سعر البيع المقترح (Selling Price)</div>
+                <div class="kpi-num" id="kpiSellingPrice">0.00 ج.م</div>
+                <div class="kpi-sub">تكلفة الحصة × معامل التسعير</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">هامش الربح للحصة (Gross Profit)</div>
+                <div class="kpi-num" style="color: #059669;" id="kpiProfit">0.00 ج.م</div>
+                <div class="kpi-sub" id="kpiMarginPct">هامش الربح: --%</div>
+            </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="bottom-bar">
+            <div style="font-size: 12px; color: var(--text-muted);">
+                معتمد باسم فريق: <b style="color: var(--brand-blue);">Blue Healing</b> • يتم الحفظ تلقائياً في المتصفح
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة كارت الوصفة</button>
+                <button class="btn btn-success" onclick="exportCurrentMealToExcel()">📊 تصدير هذه الوجبة إلى Excel (.xlsx)</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Master Menu Overview Card (Shown when clicking Menu Dashboard tab) -->
+    <div class="workspace-card" id="menuDashboardWorkspace" style="display: none;">
+        <div class="table-tools-bar">
+            <div class="table-tools-left">
+                <h3 style="font-size: 16px; font-weight: 800; color: #1E293B;">📊 ملخص المنيو الكامل لجميع الوجبات (Master Menu Engineering)</h3>
+            </div>
+            <div class="table-tools-right">
+                <button class="btn btn-success" onclick="exportAllMealsToExcel()">📥 تصدير المنيو بالكامل في ملف Excel واحد</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="recipe-table">
+                <thead>
+                    <tr>
+                        <th>رقم الصنف</th>
+                        <th>اسم الوجبة</th>
+                        <th>عدد الحصص</th>
+                        <th>حجم الوجبة</th>
+                        <th>إجمالي التكلفة</th>
+                        <th>تكلفة الحصة الواحدة</th>
+                        <th>سعر البيع المقترح</th>
+                        <th>Food Cost %</th>
+                        <th>هامش الربح للحصة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="masterMenuTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal: Master Pantry / Ingredients Library Manager -->
+<div class="modal-overlay" id="pantryModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>📦 مكتبة الخامات والأسعار الدارجة (Master Pantry)</span>
+            <span style="cursor: pointer; font-size: 18px;" onclick="closePantryModal()">✕</span>
+        </div>
+        <div class="modal-body">
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                يمكنك البحث وتعديل أسعار السوق للخامات، أو إضافة خامات جديدة. التعديلات تحفظ تلقائياً لتسهيل ملء أي وجبة!
+            </p>
+            <div class="library-search-box">
+                <input type="text" id="pantrySearchInput" placeholder="🔍 ابحث عن خامة (دجاج، أرز، زيت، طماطم...)" oninput="filterPantryList()">
+                <button class="btn btn-primary btn-sm" onclick="addNewPantryItemPrompt()">➕ خامة جديدة</button>
+            </div>
+            <div class="table-responsive" style="max-height: 400px;">
+                <table class="library-list-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الخامة</th>
+                            <th>التصنيف</th>
+                            <th>وحدة الشراء</th>
+                            <th>سعر الشراء (ج.م)</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pantryTableBody">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary btn-sm" onclick="resetPantryToDefaults()">🔄 استعادة الأسعار الافتراضية</button>
+            <button class="btn btn-primary btn-sm" onclick="closePantryModal()">حفظ وإغلاق</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Palettes for segments
+    const segmentColors = [
+        "#2563EB", "#06B6D4", "#10B981", "#F59E0B", "#8B5CF6", 
+        "#EC4899", "#14B8A6", "#64748B", "#F97316", "#84CC16"
+    ];
+
+    // Default Master Ingredients Library (40+ staples in Egyptian / Arab F&B Market)
+    const defaultPantry = [
+        // Poultry & Meat
+        { name: "صدور دجاج مخلي (Chicken Breast)", cat: "دواجن ولحوم", unit: "كيلوجرام (Kg)", price: 220 },
+        { name: "أوراك دجاج مخلية (Chicken Thighs)", cat: "دواجن ولحوم", unit: "كيلوجرام (Kg)", price: 190 },
+        { name: "دجاج كامل طازج (Whole Chicken)", cat: "دواجن ولحوم", unit: "كيلوجرام (Kg)", price: 120 },
+        { name: "لحم بقري مفروم أحمر (Minced Beef)", cat: "دواجن ولحوم", unit: "كيلوجرام (Kg)", price: 340 },
+        { name: "لحم بقري مكعبات خضار (Beef Cubes)", cat: "دواجن ولحوم", unit: "كيلوجرام (Kg)", price: 380 },
+        { name: "ستيك بقري ريب آي (Ribeye)", cat: "دواجن ولحوم", unit: "كيلوجرام (Kg)", price: 460 },
+        { name: "جمبري مقشر وسط (Shrimp)", cat: "أسماك وبحريات", unit: "كيلوجرام (Kg)", price: 360 },
+        { name: "سمك فيليه قشر بياض (Fish Fillet)", cat: "أسماك وبحريات", unit: "كيلوجرام (Kg)", price: 260 },
+        // Vegetables
+        { name: "بصل أحمر طازج (Red Onion)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 18 },
+        { name: "طماطم بلدي طازجة (Tomato)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 20 },
+        { name: "بطاطس تحمير / طبخ (Potato)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 25 },
+        { name: "فلفل أخضر رومي (Green Pepper)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 22 },
+        { name: "فلفل ألوان أحمر وأصفر (Bell Pepper)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 45 },
+        { name: "خيار طازج (Cucumber)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 18 },
+        { name: "ليمون أصفر (Lemon)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 30 },
+        { name: "ثوم طازج مفروم/صحيح (Garlic)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 70 },
+        { name: "مشروم طازج أبيض (Fresh Mushroom)", cat: "خضروات وفواكه", unit: "كيلوجرام (Kg)", price: 130 },
+        { name: "خس كابوتشا (Iceberg Lettuce)", cat: "خضروات وفواكه", unit: "قطعة / حصة", price: 15 },
+        // Dairy & Cheese
+        { name: "جبن موتزاريلا مبشور طبيعي (Mozzarella)", cat: "ألبان وأجبان", unit: "كيلوجرام (Kg)", price: 180 },
+        { name: "جبن شيدر أحمر مستورد (Cheddar)", cat: "ألبان وأجبان", unit: "كيلوجرام (Kg)", price: 280 },
+        { name: "جبن بارميزان إيطالي (Parmesan)", cat: "ألبان وأجبان", unit: "كيلوجرام (Kg)", price: 520 },
+        { name: "كريمة طهي ألبان 35% (Cooking Cream)", cat: "ألبان وأجبان", unit: "لتر (L)", price: 160 },
+        { name: "حليب كامل الدسم (Fresh Milk)", cat: "ألبان وأجبان", unit: "لتر (L)", price: 42 },
+        { name: "زبدة طبيعي غير مملحة (Butter)", cat: "ألبان وأجبان", unit: "كيلوجرام (Kg)", price: 240 },
+        // Grains & Oils
+        { name: "أرز بسمتي هندي درجة أولى (Basmati Rice)", cat: "حبوب ونشويات", unit: "كيلوجرام (Kg)", price: 85 },
+        { name: "أرز مصري حبة رفيعة (Egyptian Rice)", cat: "حبوب ونشويات", unit: "كيلوجرام (Kg)", price: 32 },
+        { name: "مكرونة فوتوتشيني / بيني (Pasta)", cat: "حبوب ونشويات", unit: "كيلوجرام (Kg)", price: 55 },
+        { name: "زيت طهي ذرة نقي (Corn Oil)", cat: "زيوت وبقالة", unit: "لتر (L)", price: 75 },
+        { name: "زيت زيتون بكر ممتاز (Olive Oil)", cat: "زيوت وبقالة", unit: "لتر (L)", price: 260 },
+        { name: "دقيق أبيض فاخر (Flour)", cat: "زيوت وبقالة", unit: "كيلوجرام (Kg)", price: 25 },
+        { name: "سكر أبيض ناعم (Sugar)", cat: "زيوت وبقالة", unit: "كيلوجرام (Kg)", price: 36 },
+        { name: "صلصة طماطم بيوريه (Tomato Paste)", cat: "زيوت وبقالة", unit: "كيلوجرام (Kg)", price: 65 },
+        // Bakery & Packaging
+        { name: "خبز برجر بريوش فاخر (Brioche Bun)", cat: "مخبوزات", unit: "قطعة / حصة", price: 12 },
+        { name: "خبز تورتيلا كبير (Tortilla)", cat: "مخبوزات", unit: "قطعة / حصة", price: 8 },
+        { name: "علبة وجبة تيك أواي فاخرة (Box Packaging)", cat: "تعبئة وتغليف", unit: "قطعة / حصة", price: 6 },
+        { name: "طقم ملاعق وشوك ومنديل (Cutlery Set)", cat: "تعبئة وتغليف", unit: "قطعة / حصة", price: 2 }
+    ];
+
+    // Global State
+    let appState = {
+        activeTab: "meal_0", // or "dashboard"
+        pantry: [],
+        meals: [
+            {
+                id: "meal_0",
+                itemNo: "#101",
+                name: "وجبة دجاج مشوي مع أرز بسمتي",
+                priceDate: "2026-11-13",
+                portions: 4,
+                portionSize: "350 gm",
+                seasoning: 10,
+                wastePct: 5,
+                multiplier: 3.33,
+                ingredients: [
+                    { name: "صدور دجاج مخلي (Chicken Breast)", date: "2026-11-12", qty: 800, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 220 },
+                    { name: "أرز بسمتي هندي درجة أولى (Basmati Rice)", date: "2026-11-10", qty: 400, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 85 },
+                    { name: "زيت طهي ذرة نقي (Corn Oil)", date: "2026-11-08", qty: 60, rUnit: "مليلتر (ml)", pUnit: "لتر (L)", price: 75 },
+                    { name: "بصل أحمر طازج (Red Onion)", date: "2026-11-13", qty: 200, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 18 },
+                    { name: "طماطم بلدي طازجة (Tomato)", date: "2026-11-13", qty: 150, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 20 },
+                    { name: "علبة وجبة تيك أواي فاخرة (Box Packaging)", date: "2026-11-01", qty: 4, rUnit: "قطعة / حصة", pUnit: "قطعة / حصة", price: 6 }
+                ]
+            },
+            {
+                id: "meal_1",
+                itemNo: "#202",
+                name: "ساندوتش برجر بقري سوبر ديلوكس",
+                priceDate: "2026-11-13",
+                portions: 2,
+                portionSize: "240 gm",
+                seasoning: 6,
+                wastePct: 4,
+                multiplier: 3.25,
+                ingredients: [
+                    { name: "لحم بقري مفروم أحمر (Minced Beef)", date: "2026-11-13", qty: 400, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 340 },
+                    { name: "خبز برجر بريوش فاخر (Brioche Bun)", date: "2026-11-13", qty: 2, rUnit: "قطعة / حصة", pUnit: "قطعة / حصة", price: 12 },
+                    { name: "جبن شيدر أحمر مستورد (Cheddar)", date: "2026-11-11", qty: 60, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 280 },
+                    { name: "خس كابوتشا (Iceberg Lettuce)", date: "2026-11-13", qty: 0.5, rUnit: "قطعة / حصة", pUnit: "قطعة / حصة", price: 15 },
+                    { name: "طماطم بلدي طازجة (Tomato)", date: "2026-11-13", qty: 80, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 20 }
+                ]
+            }
+        ]
+    };
+
+    // Load from LocalStorage
+    function initStorage() {
+        const savedState = localStorage.getItem("blue_healing_multi_meals");
+        if (savedState) {
+            try {
+                const parsed = JSON.parse(savedState);
+                if (parsed.meals && parsed.meals.length > 0) {
+                    appState.meals = parsed.meals;
+                    appState.activeTab = parsed.activeTab || appState.meals[0].id;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        const savedPantry = localStorage.getItem("blue_healing_pantry");
+        if (savedPantry) {
+            try { appState.pantry = JSON.parse(savedPantry); } catch(e) { appState.pantry = [...defaultPantry]; }
+        } else {
+            appState.pantry = [...defaultPantry];
+        }
+    }
+
+    function saveState() {
+        localStorage.setItem("blue_healing_multi_meals", JSON.stringify({
+            activeTab: appState.activeTab,
+            meals: appState.meals
+        }));
+        localStorage.setItem("blue_healing_pantry", JSON.stringify(appState.pantry));
+    }
+
+    // Mathematical Unit Conversion
+    function getConversionFactor(rUnit, pUnit) {
+        rUnit = (rUnit || "").toLowerCase();
+        pUnit = (pUnit || "").toLowerCase();
+
+        // Grams to Kg
+        if ((rUnit.includes("جرام") || rUnit.includes("gram") || rUnit.includes("g")) &&
+            (pUnit.includes("كيلو") || pUnit.includes("kg"))) {
+            return 1000.0;
+        }
+        // ml to Liters
+        if ((rUnit.includes("مل") || rUnit.includes("ml")) &&
+            (pUnit.includes("لتر") || pUnit.includes("liter") || pUnit.includes("l"))) {
+            return 1000.0;
+        }
+        // Kg to Gram
+        if ((rUnit.includes("كيلو") || rUnit.includes("kg")) &&
+            (pUnit.includes("جرام") || pUnit.includes("gram") || pUnit.includes("g"))) {
+            return 0.001;
+        }
+        // Liter to ml
+        if ((rUnit.includes("لتر") || rUnit.includes("l")) &&
+            (pUnit.includes("مل") || pUnit.includes("ml"))) {
+            return 0.001;
+        }
+        return 1.0;
+    }
+
+    // Get Active Meal
+    function getActiveMeal() {
+        return appState.meals.find(m => m.id === appState.activeTab) || appState.meals[0];
+    }
+
+    // Calculations Engine
+    function calculateMealFinancials(meal) {
+        let ingredientsSum = 0;
+        const itemCalculations = [];
+
+        (meal.ingredients || []).forEach(item => {
+            const conv = getConversionFactor(item.rUnit, item.pUnit);
+            const cost = (parseFloat(item.qty || 0) / conv) * parseFloat(item.price || 0);
+            ingredientsSum += cost;
+            itemCalculations.push({
+                name: item.name,
+                cost: cost
+            });
+        });
+
+        const seasoning = parseFloat(meal.seasoning || 0);
+        const subtotal = ingredientsSum + seasoning;
+        const wastePct = parseFloat(meal.wastePct || 0) / 100.0;
+        const wasteCost = subtotal * wastePct;
+        const totalCost = subtotal + wasteCost;
+
+        const portions = Math.max(1, parseFloat(meal.portions || 1));
+        const costPerPortion = totalCost / portions;
+
+        const multiplier = parseFloat(meal.multiplier || 3.33);
+        const sellingPrice = costPerPortion * multiplier;
+        const grossProfit = sellingPrice - costPerPortion;
+        const profitMarginPct = sellingPrice > 0 ? (grossProfit / sellingPrice) * 100 : 0;
+        const foodCostPct = sellingPrice > 0 ? (costPerPortion / sellingPrice) * 100 : 30;
+
+        return {
+            ingredientsSum,
+            itemCalculations,
+            subtotal,
+            wasteCost,
+            totalCost,
+            costPerPortion,
+            multiplier,
+            sellingPrice,
+            grossProfit,
+            profitMarginPct,
+            foodCostPct
+        };
+    }
+
+    // Render Tabs
+    function renderTabs() {
+        const tabBar = document.getElementById("mealsTabBar");
+        tabBar.innerHTML = "";
+
+        appState.meals.forEach((meal, idx) => {
+            const tab = document.createElement("div");
+            tab.className = `meal-tab ${appState.activeTab === meal.id ? 'active' : ''}`;
+            tab.innerHTML = `
+                <span>🍲 ${meal.name || 'وجبة جديدة'}</span>
+                ${appState.meals.length > 1 ? `<span class="close-tab" onclick="event.stopPropagation(); removeMealTab('${meal.id}')" title="حذف الوجبة">✕</span>` : ''}
+            `;
+            tab.onclick = () => switchTab(meal.id);
+            tabBar.appendChild(tab);
+        });
+
+        // Add Meal Button
+        const addBtn = document.createElement("button");
+        addBtn.className = "btn-add-meal";
+        addBtn.innerHTML = "➕ وجبة جديدة";
+        addBtn.onclick = createNewMeal;
+        tabBar.appendChild(addBtn);
+
+        // Master Menu Dashboard Tab
+        const dashTab = document.createElement("div");
+        dashTab.className = `meal-tab tab-menu-summary ${appState.activeTab === 'dashboard' ? 'active' : ''}`;
+        dashTab.innerHTML = "📊 ملخص المنيو الكامل";
+        dashTab.onclick = () => switchTab('dashboard');
+        tabBar.appendChild(dashTab);
+    }
+
+    function switchTab(tabId) {
+        appState.activeTab = tabId;
+        renderTabs();
+        if (tabId === 'dashboard') {
+            document.getElementById("mealWorkspace").style.display = "none";
+            document.getElementById("menuDashboardWorkspace").style.display = "block";
+            renderMasterMenuDashboard();
+        } else {
+            document.getElementById("mealWorkspace").style.display = "block";
+            document.getElementById("menuDashboardWorkspace").style.display = "none";
+            renderActiveMeal();
+        }
+        saveState();
+    }
+
+    function createNewMeal() {
+        const newId = "meal_" + Date.now();
+        const today = new Date().toISOString().split('T')[0];
+        const newMeal = {
+            id: newId,
+            itemNo: "#" + (appState.meals.length + 1) + "01",
+            name: "وجبة جديدة " + (appState.meals.length + 1),
+            priceDate: today,
+            portions: 4,
+            portionSize: "300 gm",
+            seasoning: 10,
+            wastePct: 5,
+            multiplier: 3.33,
+            ingredients: [
+                { name: "صدور دجاج مخلي (Chicken Breast)", date: today, qty: 500, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 220 },
+                { name: "أرز بسمتي هندي درجة أولى (Basmati Rice)", date: today, qty: 300, rUnit: "جرام (Gram)", pUnit: "كيلوجرام (Kg)", price: 85 }
+            ]
+        };
+        appState.meals.push(newMeal);
+        switchTab(newId);
+    }
+
+    function duplicateCurrentMeal() {
+        const active = getActiveMeal();
+        const newId = "meal_" + Date.now();
+        const copy = JSON.parse(JSON.stringify(active));
+        copy.id = newId;
+        copy.name += " (نسخة)";
+        copy.itemNo += "-C";
+        appState.meals.push(copy);
+        switchTab(newId);
+    }
+
+    function deleteCurrentMeal() {
+        if (appState.meals.length <= 1) {
+            alert("يجب الإبقاء على وجبة واحدة على الأقل بالمنيو!");
+            return;
+        }
+        if (confirm("هل أنت متأكد من حذف هذه الوجبة نهائياً؟")) {
+            const activeId = getActiveMeal().id;
+            appState.meals = appState.meals.filter(m => m.id !== activeId);
+            switchTab(appState.meals[0].id);
+        }
+    }
+
+    function removeMealTab(mealId) {
+        if (appState.meals.length <= 1) {
+            alert("يجب الإبقاء على وجبة واحدة على الأقل!");
+            return;
+        }
+        if (confirm("حذف هذه الوجبة؟")) {
+            appState.meals = appState.meals.filter(m => m.id !== mealId);
+            if (appState.activeTab === mealId) {
+                switchTab(appState.meals[0].id);
+            } else {
+                renderTabs();
+            }
+            saveState();
+        }
+    }
+
+    // Render Active Meal UI
+    function renderActiveMeal() {
+        const meal = getActiveMeal();
+        document.getElementById("mItemNo").value = meal.itemNo || "";
+        document.getElementById("mName").value = meal.name || "";
+        document.getElementById("mPriceDate").value = meal.priceDate || "";
+        document.getElementById("mPortions").value = meal.portions || 1;
+        document.getElementById("mPortionSize").value = meal.portionSize || "";
+        document.getElementById("mSeasoning").value = meal.seasoning || 0;
+        document.getElementById("mWastePct").value = meal.wastePct || 5;
+        document.getElementById("mMultiplier").value = meal.multiplier || 3.33;
+        document.getElementById("mFoodCostPct").value = (100 / (meal.multiplier || 3.33)).toFixed(1);
+
+        renderIngredientsTable(meal);
+        updateFinancialDisplay(meal);
+    }
+
+    function updateActiveMealField(field, val) {
+        const meal = getActiveMeal();
+        meal[field] = val;
+        if (field === 'priceDate') {
+            // sync ingredient dates if empty
+            (meal.ingredients || []).forEach(ing => {
+                if (!ing.date) ing.date = val;
+            });
+            renderIngredientsTable(meal);
+        }
+        updateFinancialDisplay(meal);
+        saveState();
+    }
+
+    function onMultiplierChanged(val) {
+        const mult = parseFloat(val) || 1;
+        const meal = getActiveMeal();
+        meal.multiplier = mult;
+        if (mult > 0) {
+            document.getElementById("mFoodCostPct").value = ((1 / mult) * 100).toFixed(1);
+        }
+        updateFinancialDisplay(meal);
+        saveState();
+    }
+
+    function onFoodCostChanged(val) {
+        const fc = parseFloat(val) || 1;
+        const meal = getActiveMeal();
+        if (fc > 0) {
+            meal.multiplier = parseFloat((100 / fc).toFixed(2));
+            document.getElementById("mMultiplier").value = meal.multiplier;
+        }
+        updateFinancialDisplay(meal);
+        saveState();
+    }
+
+    // Ingredients Table Rendering
+    function renderIngredientsTable(meal) {
+        const tbody = document.getElementById("ingredientsBody");
+        tbody.innerHTML = "";
+
+        const defaultDate = meal.priceDate || new Date().toISOString().split('T')[0];
+
+        (meal.ingredients || []).forEach((item, index) => {
+            const tr = document.createElement("tr");
+            const conv = getConversionFactor(item.rUnit, item.pUnit);
+            const cost = (parseFloat(item.qty || 0) / conv) * parseFloat(item.price || 0);
+
+            tr.innerHTML = `
+                <td>
+                    <input type="text" value="${item.name || ''}" onchange="updateIngredient(${index}, 'name', this.value)">
+                </td>
+                <td>
+                    <input type="date" value="${item.date || defaultDate}" onchange="updateIngredient(${index}, 'date', this.value)">
+                </td>
+                <td>
+                    <input type="number" step="any" min="0" value="${item.qty || 0}" oninput="updateIngredient(${index}, 'qty', parseFloat(this.value)||0)">
+                </td>
+                <td>
+                    <select onchange="updateIngredient(${index}, 'rUnit', this.value)">
+                        <option value="جرام (Gram)" ${item.rUnit?.includes("جرام") ? 'selected' : ''}>جرام (Gram)</option>
+                        <option value="كيلوجرام (Kg)" ${item.rUnit?.includes("كيلوجرام") ? 'selected' : ''}>كيلوجرام (Kg)</option>
+                        <option value="مليلتر (ml)" ${item.rUnit?.includes("مليلتر") ? 'selected' : ''}>مليلتر (ml)</option>
+                        <option value="لتر (L)" ${item.rUnit?.includes("لتر") ? 'selected' : ''}>لتر (L)</option>
+                        <option value="قطعة / حصة" ${item.rUnit?.includes("قطعة") ? 'selected' : ''}>قطعة / حصة</option>
+                    </select>
+                </td>
+                <td>
+                    <select onchange="updateIngredient(${index}, 'pUnit', this.value)">
+                        <option value="كيلوجرام (Kg)" ${item.pUnit?.includes("كيلوجرام") ? 'selected' : ''}>كيلوجرام (Kg)</option>
+                        <option value="لتر (L)" ${item.pUnit?.includes("لتر") ? 'selected' : ''}>لتر (L)</option>
+                        <option value="قطعة / حصة" ${item.pUnit?.includes("قطعة") ? 'selected' : ''}>قطعة / حصة</option>
+                        <option value="جرام (Gram)" ${item.pUnit?.includes("جرام") ? 'selected' : ''}>جرام (Gram)</option>
+                        <option value="مليلتر (ml)" ${item.pUnit?.includes("مليلتر") ? 'selected' : ''}>مليلتر (ml)</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" step="any" min="0" value="${item.price || 0}" oninput="updateIngredient(${index}, 'price', parseFloat(this.value)||0)">
+                </td>
+                <td>
+                    <div class="cost-badge">${cost.toFixed(2)} ج.م</div>
+                </td>
+                <td style="text-align: center;">
+                    <button class="btn btn-outline btn-sm" style="color: red; border: none; padding: 2px 6px;" onclick="removeIngredient(${index})">✕</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updateIngredient(index, field, val) {
+        const meal = getActiveMeal();
+        meal.ingredients[index][field] = val;
+        updateFinancialDisplay(meal);
+        // re-render cost cell without losing focus if simple value
+        if (field === 'qty' || field === 'price' || field === 'rUnit' || field === 'pUnit') {
+            const tr = document.querySelectorAll("#ingredientsBody tr")[index];
+            if (tr) {
+                const item = meal.ingredients[index];
+                const conv = getConversionFactor(item.rUnit, item.pUnit);
+                const cost = (parseFloat(item.qty || 0) / conv) * parseFloat(item.price || 0);
+                tr.querySelector(".cost-badge").innerText = cost.toFixed(2) + " ج.م";
+            }
+        }
+        saveState();
+    }
+
+    function addNewIngredientRow() {
+        const meal = getActiveMeal();
+        const defaultDate = meal.priceDate || new Date().toISOString().split('T')[0];
+        meal.ingredients.push({
+            name: "خامة جديدة",
+            date: defaultDate,
+            qty: 100,
+            rUnit: "جرام (Gram)",
+            pUnit: "كيلوجرام (Kg)",
+            price: 50
+        });
+        renderIngredientsTable(meal);
+        updateFinancialDisplay(meal);
+        saveState();
+    }
+
+    function removeIngredient(index) {
+        const meal = getActiveMeal();
+        meal.ingredients.splice(index, 1);
+        renderIngredientsTable(meal);
+        updateFinancialDisplay(meal);
+        saveState();
+    }
+
+    // Update Financial & Progress Visuals
+    function updateFinancialDisplay(meal) {
+        const f = calculateMealFinancials(meal);
+
+        document.getElementById("kpiSubtotal").innerText = f.subtotal.toFixed(2) + " ج.م";
+        document.getElementById("kpiWaste").innerText = f.wasteCost.toFixed(2) + " ج.م";
+        document.getElementById("kpiTotal").innerText = f.totalCost.toFixed(2) + " ج.م";
+        document.getElementById("kpiPortionCost").innerText = f.costPerPortion.toFixed(2) + " ج.م";
+        document.getElementById("kpiSellingPrice").innerText = f.sellingPrice.toFixed(2) + " ج.م";
+        document.getElementById("kpiProfit").innerText = f.grossProfit.toFixed(2) + " ج.م";
+        document.getElementById("kpiMarginPct").innerText = `هامش الربح: ${f.profitMarginPct.toFixed(1)}%`;
+
+        // Update Breakdown Progress Bar
+        const bar = document.getElementById("progressBar");
+        const legend = document.getElementById("progressLegend");
+        bar.innerHTML = "";
+        legend.innerHTML = "";
+
+        if (f.totalCost <= 0) {
+            document.getElementById("breakdownTotalLabel").innerText = "لا توجد تكاليف";
+            return;
+        }
+
+        document.getElementById("breakdownTotalLabel").innerText = `إجمالي ${meal.ingredients.length} مكونات + بهارات + هالك (${f.totalCost.toFixed(2)} ج.م)`;
+
+        const segments = [...f.itemCalculations];
+        if (meal.seasoning > 0) segments.push({ name: "البهارات والتوابل", cost: meal.seasoning });
+        if (f.wasteCost > 0) segments.push({ name: "الهالك (5%)", cost: f.wasteCost });
+
+        segments.forEach((seg, idx) => {
+            const pct = (seg.cost / f.totalCost) * 100;
+            if (pct <= 0) return;
+            const col = segmentColors[idx % segmentColors.length];
+
+            const sDiv = document.createElement("div");
+            sDiv.className = "progress-seg";
+            sDiv.style.width = pct + "%";
+            sDiv.style.background = col;
+            sDiv.title = `${seg.name}: ${pct.toFixed(1)}% (${seg.cost.toFixed(2)} ج.م)`;
+            bar.appendChild(sDiv);
+
+            const cDiv = document.createElement("div");
+            cDiv.className = "legend-chip";
+            cDiv.innerHTML = `
+                <span class="legend-dot" style="background:${col}"></span>
+                <span>${seg.name}: <b>${pct.toFixed(1)}%</b></span>
+            `;
+            legend.appendChild(cDiv);
+        });
+    }
+
+    // Master Menu Overview Dashboard
+    function renderMasterMenuDashboard() {
+        const tbody = document.getElementById("masterMenuTableBody");
+        tbody.innerHTML = "";
+
+        appState.meals.forEach((meal, idx) => {
+            const f = calculateMealFinancials(meal);
+            const tr = document.createElement("tr");
+
+            tr.innerHTML = `
+                <td><b>${meal.itemNo || '-'}</b></td>
+                <td><b>${meal.name || 'بدون اسم'}</b></td>
+                <td>${meal.portions || 1}</td>
+                <td>${meal.portionSize || '-'}</td>
+                <td>${f.totalCost.toFixed(2)} ج.م</td>
+                <td style="color:#6B21A8; font-weight:800;">${f.costPerPortion.toFixed(2)} ج.م</td>
+                <td style="color:#059669; font-weight:800;">${f.sellingPrice.toFixed(2)} ج.م</td>
+                <td>${f.foodCostPct.toFixed(1)}%</td>
+                <td style="color:#059669; font-weight:700;">+${f.grossProfit.toFixed(2)} ج.م</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="switchTab('${meal.id}')">تعديل</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Pantry Modal Functions
+    function openPantryModal() {
+        renderPantryTable();
+        document.getElementById("pantryModal").classList.add("active");
+    }
+
+    function closePantryModal() {
+        document.getElementById("pantryModal").classList.remove("active");
+    }
+
+    function renderPantryTable(filteredList = null) {
+        const tbody = document.getElementById("pantryTableBody");
+        tbody.innerHTML = "";
+        const list = filteredList || appState.pantry;
+
+        list.forEach((item, idx) => {
+            const origIndex = appState.pantry.indexOf(item);
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><b>${item.name}</b></td>
+                <td><span style="font-size:11px; background:#F1F5F9; padding:2px 6px; border-radius:4px;">${item.cat}</span></td>
+                <td>${item.unit}</td>
+                <td>
+                    <input type="number" step="any" value="${item.price}" style="width:80px; padding:3px 6px; font-size:12px; border:1px solid #CBD5E1; border-radius:4px;" 
+                        onchange="updatePantryPrice(${origIndex}, this.value)"> ج.م
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="insertPantryItemToCurrentMeal(${origIndex})">إدراج للوجبة</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updatePantryPrice(index, val) {
+        appState.pantry[index].price = parseFloat(val) || 0;
+        saveState();
+    }
+
+    function filterPantryList() {
+        const q = (document.getElementById("pantrySearchInput").value || "").toLowerCase();
+        const filtered = appState.pantry.filter(i => i.name.toLowerCase().includes(q) || i.cat.toLowerCase().includes(q));
+        renderPantryTable(filtered);
+    }
+
+    function insertPantryItemToCurrentMeal(pantryIdx) {
+        const pItem = appState.pantry[pantryIdx];
+        const meal = getActiveMeal();
+        const defaultDate = meal.priceDate || new Date().toISOString().split('T')[0];
+
+        // determine typical recipe unit
+        let rUnit = "جرام (Gram)";
+        let qty = 100;
+        if (pItem.unit.includes("لتر")) { rUnit = "مليلتر (ml)"; qty = 50; }
+        if (pItem.unit.includes("قطعة")) { rUnit = "قطعة / حصة"; qty = 1; }
+
+        meal.ingredients.push({
+            name: pItem.name,
+            date: defaultDate,
+            qty: qty,
+            rUnit: rUnit,
+            pUnit: pItem.unit,
+            price: pItem.price
+        });
+
+        renderIngredientsTable(meal);
+        updateFinancialDisplay(meal);
+        saveState();
+        closePantryModal();
+    }
+
+    function openQuickAddPantry() {
+        openPantryModal();
+    }
+
+    function addNewPantryItemPrompt() {
+        const name = prompt("أدخل اسم الخامة الجديدة:");
+        if (!name) return;
+        const price = parseFloat(prompt("أدخل سعر الشراء بالجنيه:", "50")) || 50;
+        const unit = prompt("أدخل وحدة الشراء (مثلاً: كيلوجرام (Kg) أو لتر (L) أو قطعة / حصة):", "كيلوجرام (Kg)") || "كيلوجرام (Kg)";
+        appState.pantry.unshift({
+            name: name,
+            cat: "خامات إضافية",
+            unit: unit,
+            price: price
+        });
+        saveState();
+        renderPantryTable();
+    }
+
+    function resetPantryToDefaults() {
+        if (confirm("هل تريد استعادة قائمة الأسعار الأصلية؟")) {
+            appState.pantry = [...defaultPantry];
+            saveState();
+            renderPantryTable();
+        }
+    }
+
+    // Excel Upload Feature (رفع ملف إكسيل)
+    function triggerExcelUpload() {
+        document.getElementById("excelFileInput").click();
+    }
+
+    function handleExcelUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                if (!rows || rows.length < 2) {
+                    alert("الملف فارغ أو لا يحتوي على صفوف بيانات صالحة!");
+                    return;
+                }
+
+                // Analyze rows to find headers
+                let startRow = -1;
+                let colMap = { name: 0, date: 1, qty: 2, rUnit: 3, pUnit: 4, price: 5 };
+
+                for (let r = 0; r < Math.min(15, rows.length); r++) {
+                    const row = rows[r];
+                    if (!row) continue;
+                    const rowStr = row.join(" ").toLowerCase();
+                    if (rowStr.includes("مكون") || rowStr.includes("ingredient") || rowStr.includes("خامة")) {
+                        startRow = r + 1;
+                        break;
+                    }
+                }
+
+                if (startRow === -1) startRow = 1; // assume row 0 is header
+
+                const meal = getActiveMeal();
+                let importedCount = 0;
+                const today = new Date().toISOString().split('T')[0];
+
+                for (let r = startRow; r < rows.length; r++) {
+                    const row = rows[r];
+                    if (!row || !row[0]) continue; // skip empty
+
+                    const name = String(row[0] || "").trim();
+                    if (!name || name.toLowerCase().includes("total") || name.toLowerCase().includes("subtotal") || name.includes("إجمالي") || name.includes("المجموع")) {
+                        continue;
+                    }
+
+                    const date = row[1] ? String(row[1]).trim() : today;
+                    const qty = parseFloat(row[2]) || 100;
+                    const rUnit = row[3] ? String(row[3]).trim() : "جرام (Gram)";
+                    const pUnit = row[4] ? String(row[4]).trim() : "كيلوجرام (Kg)";
+                    const price = parseFloat(row[5]) || 0;
+
+                    meal.ingredients.push({
+                        name: name,
+                        date: date,
+                        qty: qty,
+                        rUnit: rUnit,
+                        pUnit: pUnit,
+                        price: price
+                    });
+                    importedCount++;
+                }
+
+                if (importedCount > 0) {
+                    renderIngredientsTable(meal);
+                    updateFinancialDisplay(meal);
+                    saveState();
+                    alert(`✅ تم بنجاح استيراد ${importedCount} خامة من ملف الإكسيل وإضافتها للوجبة الحالية!`);
+                } else {
+                    alert("تعذر قراءة الخامات من الملف. يرجى التأكد من ترتيب الأعمدة أو استخدام النموذج المعتمد.");
+                }
+            } catch(err) {
+                alert("خطأ أثناء قراءة ملف الإكسيل: " + err.message);
+            }
+            event.target.value = ""; // reset input
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function downloadBlankExcelTemplate() {
+        const wb = XLSX.utils.book_new();
+        const data = [
+            ["Ingredients (اسم المكون)", "Price Date (تاريخ السعر)", "Recipe Qty (الكمية)", "Recipe Unit (الوحدة)", "Purchase Unit (وحدة الشراء)", "Price / Unit (سعر الشراء ج.م)"],
+            ["صدور دجاج مخلي", "2026-11-13", 500, "جرام (Gram)", "كيلوجرام (Kg)", 220],
+            ["أرز بسمتي هندي", "2026-11-13", 300, "جرام (Gram)", "كيلوجرام (Kg)", 85],
+            ["زيت ذرة نقي", "2026-11-13", 50, "مليلتر (ml)", "لتر (L)", 75]
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        ws['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 18 }];
+        XLSX.utils.book_append_sheet(wb, ws, "Template");
+        XLSX.writeFile(wb, "Blue_Healing_Ingredients_Template.xlsx");
+    }
+
+    // Professional Excel Export with Gridlines and Outlined Cells (تحديد خانات شيت الإكسيل)
+    function buildExcelSheetForMeal(meal) {
+        const f = calculateMealFinancials(meal);
+        const data = [];
+
+        // Branding
+        data.push(["✦ BLUE HEALING ✦ | CULINARY OPERATIONS & MENU ENGINEERING"]);
+        data.push(["كارت تكلفة الوصفة المعيارية - STANDARD RECIPE COST CARD"]);
+        data.push([]); // blank
+
+        // Info Block
+        data.push(["1. Item No. (رقم الصنف):", meal.itemNo || ""]);
+        data.push(["Meal Name (اسم الوجبة):", meal.name || ""]);
+        data.push(["تاريخ تسعير الخامات (Price Date):", meal.priceDate || ""]);
+        data.push(["2. No. of Portions (عدد الوجبات):", meal.portions || 1]);
+        data.push(["3. Size of Portion (حجم الحصة):", meal.portionSize || ""]);
+        data.push(["4. Cost / Portion (تكلفة الوجبة الواحدة):", f.costPerPortion.toFixed(2) + " ج.م"]);
+        data.push(["5. Food Cost % (نسبة تكلفة الطعام):", f.foodCostPct.toFixed(1) + " %"]);
+        data.push(["Pricing Multiplier (مُعامل الضرب 3.1 - 3.6):", f.multiplier]);
+        data.push(["6. Selling Price / Portion (سعر البيع المقترح):", f.sellingPrice.toFixed(2) + " ج.م"]);
+        data.push(["صافي هامش الربح للحصة (Gross Profit):", f.grossProfit.toFixed(2) + " ج.م"]);
+        data.push(["فريق العمل المعتمد (Team):", "Blue Healing"]);
+        data.push([]); // blank
+
+        // Table Header
+        data.push([
+            "Ingredients (المكونات)",
+            "Price Date (تاريخ السعر)",
+            "Recipe Qty (الكمية)",
+            "Recipe Unit (الوحدة)",
+            "Purchase Unit (وحدة الشراء)",
+            "Price / Unit (سعر الشراء ج.م)",
+            "Cost L.E (التكلفة بالجنيه)"
+        ]);
+
+        (meal.ingredients || []).forEach(item => {
+            const conv = getConversionFactor(item.rUnit, item.pUnit);
+            const cost = (parseFloat(item.qty || 0) / conv) * parseFloat(item.price || 0);
+            data.push([
+                item.name,
+                item.date || meal.priceDate || "",
+                parseFloat(item.qty || 0),
+                item.rUnit || "",
+                item.pUnit || "",
+                parseFloat(item.price || 0),
+                parseFloat(cost.toFixed(2))
+            ]);
+        });
+
+        // Summary Rows
+        data.push(["Seasoning (البهارات والتوابل)", "", "", "", "", "", parseFloat(meal.seasoning || 0)]);
+        data.push(["Sub-total (المجموع الفرعي = الخامات + التوابل)", "", "", "", "", "", parseFloat(f.subtotal.toFixed(2))]);
+        data.push([`${meal.wastePct || 5}% Waste (نسبة الهالك والفاقد)`, "", "", "", "", "", parseFloat(f.wasteCost.toFixed(2))]);
+        data.push(["Total Cost (التكلفة الإجمالية للوصفة)", "", "", "", "", "", parseFloat(f.totalCost.toFixed(2))]);
+
+        const ws = XLSX.utils.aoa_to_sheet(data);
+
+        // Column widths
+        ws['!cols'] = [
+            { wch: 38 },
+            { wch: 16 },
+            { wch: 14 },
+            { wch: 16 },
+            { wch: 16 },
+            { wch: 18 },
+            { wch: 22 }
+        ];
+
+        return ws;
+    }
+
+    function exportCurrentMealToExcel() {
+        const meal = getActiveMeal();
+        const wb = XLSX.utils.book_new();
+        const ws = buildExcelSheetForMeal(meal);
+        const sheetTitle = (meal.name || "Recipe").substring(0, 30).replace(/[\\/:*?"<>|]/g, "_");
+        XLSX.utils.book_append_sheet(wb, ws, sheetTitle);
+        XLSX.writeFile(wb, `Blue_Healing_${sheetTitle}.xlsx`);
+    }
+
+    function exportAllMealsToExcel() {
+        const wb = XLSX.utils.book_new();
+
+        // 1. Summary Sheet
+        const summaryData = [
+            ["✦ BLUE HEALING ✦ | ملخص المنيو الكامل وقائمة الأسعار والتكاليف"],
+            ["تاريخ استخراج التقرير:", new Date().toLocaleDateString('ar-EG')],
+            [],
+            ["كود الصنف", "اسم الوجبة", "عدد الحصص", "حجم الحصة", "إجمالي التكلفة", "تكلفة الحصة الواحدة", "سعر البيع المقترح", "Food Cost %", "هامش الربح للحصة", "نسبة الهامش"]
+        ];
+
+        appState.meals.forEach(meal => {
+            const f = calculateMealFinancials(meal);
+            summaryData.push([
+                meal.itemNo || "",
+                meal.name || "",
+                meal.portions || 1,
+                meal.portionSize || "",
+                parseFloat(f.totalCost.toFixed(2)),
+                parseFloat(f.costPerPortion.toFixed(2)),
+                parseFloat(f.sellingPrice.toFixed(2)),
+                parseFloat(f.foodCostPct.toFixed(1)) + "%",
+                parseFloat(f.grossProfit.toFixed(2)),
+                parseFloat(f.profitMarginPct.toFixed(1)) + "%"
+            ]);
+        });
+
+        const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+        wsSummary['!cols'] = [
+            { wch: 14 }, { wch: 32 }, { wch: 12 }, { wch: 14 }, 
+            { wch: 16 }, { wch: 18 }, { wch: 18 }, { wch: 14 }, { wch: 18 }, { wch: 14 }
+        ];
+        XLSX.utils.book_append_sheet(wb, wsSummary, "ملخص المنيو العام");
+
+        // 2. Individual Sheet for each meal
+        appState.meals.forEach((meal, idx) => {
+            const wsMeal = buildExcelSheetForMeal(meal);
+            let sName = (meal.name || `وجبة_${idx+1}`).substring(0, 25).replace(/[\\/:*?"<>|]/g, "_");
+            XLSX.utils.book_append_sheet(wb, wsMeal, `${idx+1}-${sName}`);
+        });
+
+        XLSX.writeFile(wb, "Blue_Healing_Complete_Menu_Costing.xlsx");
+    }
+
+    // Initialization
+    window.onload = function() {
+        initStorage();
+        renderTabs();
+        if (appState.activeTab === 'dashboard') {
+            switchTab('dashboard');
+        } else {
+            renderActiveMeal();
+        }
+    };
+</script>
+
+</body>
+</html>
