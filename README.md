@@ -1,83 +1,116 @@
 # ✦ Blue Healing • Recipe Cost Calculator & Menu Engineering ✦
 
-نظام متكامل لحساب وتكلفة الوجبات وتسعير المنيو المعياري (Standard Recipe Cost Card) وإدارة منتجع وسبا Blue Healing، مبني بهندسة خادم Node.js مع واجهة مستخدم تفاعلية ديناميكية.
+An integrated platform for standard recipe costing, menu engineering (Standard Recipe Cost Card), and resort wellness operations at Blue Healing Resort & Wellness. Built with a Node.js backend and a dynamic, responsive frontend.
 
 ---
 
-## 🌟 مميزات النظام (Features)
+## 🌟 Key Features
 
-- **خادم Node.js متطور وسريع:** خادم Express عالي الكفاءة يخدم واجهة المستخدم ويوفر واجهات برمجية (API) للوجبات.
-- **تحميل ديناميكي للوصفات (Dynamic Recipe Loading):** تم فصل بيانات الوجبات تماماً عن ملف الواجهة، حيث يتم تحميل كافة الوصفات فورياً من مصدر الحقيقة المعتمد `recipes.json`.
-- **حساب تكلفة الخامات بدقة:** دعم تحويل الوحدات التلقائي (جرامات إلى كيلوجرام، مليلتر إلى لتر، حبات وقطع).
-- **تسجيل تواريخ الأسعار (Price Date):** متابعة تاريخ تسعير كل خامة لمراقبة فواتير الموردين وتغيرات السوق.
-- **حساب الهالك والفاقد المعياري (5% Waste):** تغطية هالك الطهي والتقشير تلقائياً.
-- **مُعامل التسعير (3.1 - 3.6 Pricing Multiplier):** لتحديد سعر البيع الأمثل ونسبة تكلفة الطعام المستهدفة (Food Cost %).
-- **شريط التوزيع النسبي للتكلفة (Cost Breakdown Bar):** عرض بصري تفاعلي لنسب مساهمة كل خامة في التكلفة الإجمالية.
-- **مؤشرات الربحية (Financial KPIs):** حساب لحظي لصافي هامش الربح للحصة (Gross Profit) ونسبة الهامش (Margin %).
-- **تصدير إكسيل فاخر (.xlsx):** توليد شيت إكسيل احترافي بمعادلات حية وهوية فريق Blue Healing بضغطة زر واحدة.
-- **جاهز للطباعة والحفظ كـ PDF:** تصميم متوافق مع معايير طباعة كروت الوصفات المعيارية (SOP).
-- **حفظ كامل للنصوص العربية وتشفير UTF-8:** دعم كامل وفوري للغة العربية واتجاه اليمين إلى اليسار (RTL).
+- **Node.js Express Backend:** High-performance, lightweight backend serving static client assets and RESTful API endpoints.
+- **Dynamic Recipe Loading:** Recipe data is decoupled from the frontend code; recipes are dynamically fetched on startup from `recipes.json` (the single source of truth).
+- **Accurate Food Costing:** Automated unit conversion (grams to kilograms, milliliters to liters, portions, and pieces).
+- **Price Date Tracking:** Record and monitor vendor price update dates to manage market fluctuations.
+- **Standard Waste Factor (5%):** Automatically calculates peeling, trimming, and cooking loss.
+- **Pricing Multipliers (3.1 – 3.6):** Optimizes menu sales pricing based on target Food Cost % benchmarks.
+- **Interactive Cost Breakdown:** Visual breakdown of ingredient cost contributions.
+- **Financial KPIs:** Real-time calculation of gross profit per portion and profit margin percentage.
+- **Professional Excel (.xlsx) Export:** One-click generation of branded Excel recipe cards with live formulas.
+- **Print & PDF Ready:** Compliant with standard operating procedure (SOP) recipe card formatting.
+- **Arabic Language & UTF-8 Preserved:** Native right-to-left (RTL) Arabic typography and strict UTF-8 character encoding throughout.
 
 ---
 
-## 📁 هيكل المشروع المنظم (Node.js Project Structure)
+## 📁 Project Structure
 
 ```text
 bluehealing/
-├── public/                               # مجلد الواجهة الأمامية والملفات الثابتة
-│   ├── index.html                        # واجهة المستخدم الرئيسية (بدون بيانات صلبة)
-│   ├── food_cost_calculator.html         # حاسبة تكلفة الوصفات
-│   ├── logo.jpg                          # الشعار الرسمي للمنتجع
-│   ├── Standard_Recipe_Cost_Card.xlsx    # نموذج إكسيل المعتمد
-│   └── recipes.json                      # رابط ديناميكي للوصفات
+├── public/                               # Frontend client and static assets
+│   ├── index.html                        # Main web application (dynamic data loading)
+│   ├── food_cost_calculator.html         # Recipe costing interface
+│   ├── logo.jpg                          # Resort branding logo
+│   ├── Standard_Recipe_Cost_Card.xlsx    # Master Excel cost template
+│   └── recipes.json                      # Symlink to root recipes.json
 ├── scripts/
-│   └── legacy_python/                    # الأدوات وسكريبتات بايثون المساعدة السابقة
-├── recipes.json                          # مصدر الحقيقة المعتمد لكافة بيانات الوجبات
-├── server.js                             # خادم Node.js (Express API & Static Server)
-├── package.json                          # إعدادات حزمة Node.js والاعتماديات
-├── package-lock.json                     # قفل نسخ الحزم والاعتماديات
-├── Run_Food_Cost_App.bat                 # ملف تشغيل فوري لخادم Node.js
-├── تشغيل_البرنامج.bat                     # ملف تشغيل سريع باللغة العربية
-├── .gitignore                            # استثناء node_modules وملفات البناء
-└── README.md                             # توثيق المشروع وطريقة التشغيل
+│   └── legacy_python/                    # Archived Python desktop and utility scripts
+├── recipes.json                          # Source of truth for all recipe data (UTF-8)
+├── server.js                             # Node.js backend server and REST API
+├── package.json                          # Project metadata, scripts, and dependencies
+├── package-lock.json                     # Dependency version lock
+├── .gitignore                            # Git ignore rules (node_modules, logs, etc.)
+└── README.md                             # Project documentation and instructions
 ```
 
 ---
 
-## 🚀 طريقة التشغيل (Quick Start)
+## 📋 Prerequisites
 
-### المتطلبات الأساسية
-- تثبيت [Node.js](https://nodejs.org/) (الإصدار 18 أو أحدث).
+- **Node.js** (v18.0.0 or higher recommended)
+- **npm** (comes bundled with Node.js)
 
-### 1. تشغيل الخادم
-يمكنك تشغيل الخادم بإحدى الطرق التالية:
-
-- **عبر سطر الأوامر:**
-  ```bash
-  npm start
-  ```
-  أو:
-  ```bash
-  node server.js
-  ```
-
-- **في بيئة Windows:**
-  اضغط نقراً مزدوجاً على الملف:
-  - `تشغيل_البرنامج.bat` أو `Run_Food_Cost_App.bat`
-
-### 2. فتح التطبيق
-بعد بدء الخادم، افتح المتصفح على الرابط:
-[http://localhost:3000](http://localhost:3000)
+Verify your Node.js and npm installations:
+```bash
+node -v
+npm -v
+```
 
 ---
 
-## 🔌 الواجهات البرمجية (API Endpoints)
+## 🚀 Getting Started
 
-| المسار | الطريقة | الوصف |
+### 1. Installation
+
+Clone or navigate to the project directory, then install the dependencies:
+
+```bash
+npm install
+```
+
+### 2. Running the Server
+
+Start the application with npm:
+
+```bash
+npm start
+```
+
+Alternatively, you can run the server directly using Node:
+
+```bash
+node server.js
+```
+
+To run on a custom port, set the `PORT` environment variable:
+
+```bash
+PORT=8080 node server.js
+```
+
+### 3. Accessing the Application
+
+Once the server has started, open your web browser and navigate to:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## 🔌 API Reference
+
+| Endpoint | Method | Description |
 |---|---|---|
-| `/api/recipes` | `GET` | استرجاع كافة بيانات الوصفات من `recipes.json` بتشفير UTF-8 |
-| `/api/recipes` | `POST` | حفظ وتحديث قائمة الوصفات في `recipes.json` |
-| `/` | `GET` | تقديم واجهة الويب الرئيسية من مجلد `public/` |
+| `/api/recipes` | `GET` | Returns all 92 standard recipes from `recipes.json` (`Content-Type: application/json; charset=utf-8`). |
+| `/api/recipes` | `POST` | Updates and persists the recipe list to `recipes.json`. |
+| `/` | `GET` | Serves the main application from `public/index.html`. |
+| `/*` | `GET` | Serves static assets from `public/` (images, stylesheets, templates). |
+
+---
+
+## 📊 Data Source of Truth
+
+- **`recipes.json`** at the project root is the authoritative source of truth for all 92 recipes.
+- When the frontend loads, it calls `GET /api/recipes` to retrieve the latest data.
+- All modifications are encoded in strict UTF-8 to ensure that Arabic names, ingredient details, badges, and units are maintained without corruption.
 
 ---
 
