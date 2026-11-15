@@ -1855,10 +1855,20 @@
 
     async function loadRecipesFromServer() {
         try {
-            const response = await fetch("/api/recipes");
+            let response = await fetch("/api/recipes");
+            if (!response.ok) {
+                response = await fetch("recipes.json");
+            }
             if (!response.ok) throw new Error("Failed to load recipes: " + response.status);
             defaultMeals = await response.json();
         } catch (e) {
+            try {
+                const fallbackResp = await fetch("recipes.json");
+                if (fallbackResp.ok) {
+                    defaultMeals = await fallbackResp.json();
+                    return;
+                }
+            } catch (fallbackErr) {}
             console.error("Recipe loading error:", e);
             defaultMeals = [];
         }
@@ -1906,9 +1916,9 @@
             if (raw) {
                 const parsed = JSON.parse(raw);
                 appState = { ...appState, ...parsed };
-                if (!appState.mealsVersion || appState.mealsVersion !== "v4.0" || !appState.meals || appState.meals.length < 90) {
+                if (!appState.mealsVersion || appState.mealsVersion !== "v5.0" || !appState.meals || appState.meals.length < 90) {
                     appState.meals = [...defaultMeals];
-                    appState.mealsVersion = "v4.0";
+                    appState.mealsVersion = "v5.0";
                 }
                 if (!appState.meals || !appState.meals.length || appState.meals.length < 50) {
                     const existingIds = new Set((appState.meals || []).map(m => m.id));
@@ -1922,6 +1932,8 @@
                 if (!appState.adminsList || !appState.adminsList.length) {
                     appState.adminsList = [{ id: "adm_1", name: "المدير العام", username: "admin", passcode: "bluehealing123" }];
                 }
+            } else {
+                appState.meals = [...defaultMeals];
             }
         } catch (e) {
             console.error("Storage load error:", e);
@@ -3510,7 +3522,8 @@
     }
 
     // --- System Bootstrapping ---
-    window.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener("DOMContentLoaded", async () => {
+        await loadRecipesFromServer();
         loadState();
         loadTheme();
         applyResortSettingsUI();
