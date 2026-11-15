@@ -55,14 +55,17 @@ app.get('*', (req, res) => {
 });
 
 // Start Server
-const server = app.listen(PORT, () => {
-    console.log(`=======================================================`);
-    console.log(`  Blue Healing Resort & Wellness Platform Server       `);
-    console.log(`  Running at: http://localhost:${PORT}                 `);
-    console.log(`  Source of Truth: ${RECIPES_FILE}                     `);
-    console.log(`  Static Directory: ${PUBLIC_DIR}                      `);
-    console.log(`=======================================================`);
-});
+let server;
+if (require.main === module) {
+    server = app.listen(PORT, () => {
+        console.log(`=======================================================`);
+        console.log(`  Blue Healing Resort & Wellness Platform Server       `);
+        console.log(`  Running at: http://localhost:${PORT}                 `);
+        console.log(`  Source of Truth: ${RECIPES_FILE}                     `);
+        console.log(`  Static Directory: ${PUBLIC_DIR}                      `);
+        console.log(`=======================================================`);
+    });
+}
 
 // Graceful termination
 process.on('SIGINT', () => {
